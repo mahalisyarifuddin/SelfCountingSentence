@@ -1543,7 +1543,9 @@
 				if (n < 100) return `${u[Math.floor(n / 10)]} puluh${n % 10 ? ' ' + u[n % 10] : ''}`;
 				if (n < 200) return `seratus${n > 100 ? ' ' + words.id(n % 100) : ''}`;
 				if (n < 1000) return `${u[Math.floor(n / 100)]} ratus${n % 100 ? ' ' + words.id(n % 100) : ''}`;
-				return 'lebih dari seribu';
+				if (n < 2000) return `seribu${n > 1000 ? ' ' + words.id(n % 1000) : ''}`;
+				if (n < 10000) return `${u[Math.floor(n / 1000)]} ribu${n % 1000 ? ' ' + words.id(n % 1000) : ''}`;
+				return 'lebih dari sembilan ribu';
 			},
 
 			en(n) {
@@ -1553,7 +1555,8 @@
 				if (n < 20) return u[n];
 				if (n < 100) return `${t[Math.floor(n / 10)]}${n % 10 ? '-' + u[n % 10] : ''}`;
 				if (n < 1000) return `${u[Math.floor(n / 100)]} hundred${n % 100 ? ' ' + words.en(n % 100) : ''}`;
-				return 'more than a thousand';
+				if (n < 10000) return `${words.en(Math.floor(n / 1000))} thousand${n % 1000 ? ' ' + words.en(n % 1000) : ''}`;
+				return 'more than nine thousand';
 			},
 
 			/* feminine: una, veintiuna, doscientas — "letra" is feminine */
@@ -1569,7 +1572,9 @@
 				if (n < 100) return `${t[Math.floor(n / 10)]}${n % 10 ? ' y ' + u[n % 10] : ''}`;
 				if (n === 100) return 'cien';
 				if (n < 1000) return `${h[Math.floor(n / 100)]}${n % 100 ? ' ' + words.es(n % 100) : ''}`;
-				return 'más de mil';
+				if (n < 2000) return `mil${n % 1000 ? ' ' + words.es(n % 1000) : ''}`;
+				if (n < 10000) return `${words.es(Math.floor(n / 1000))} mil${n % 1000 ? ' ' + words.es(n % 1000) : ''}`;
+				return 'más de nueve mil';
 			},
 
 			/* feminine: une, vingt et une, quatre-vingt-une — "lettre" is feminine */
@@ -1598,13 +1603,20 @@
 					if (r === 0 && hn > 1) pre += 's';
 					return r ? `${pre} ${words.fr(r)}` : pre;
 				}
-				return 'plus de mille';
+				if (n < 2000) return `mille${n % 1000 ? ' ' + words.fr(n % 1000) : ''}`;
+				if (n < 10000) {
+					let tn = words.fr(Math.floor(n / 1000));
+					if (tn.endsWith('une')) tn = tn.slice(0, -1);
+					return `${tn} mille${n % 1000 ? ' ' + words.fr(n % 1000) : ''}`;
+				}
+				return 'plus de neuf mille';
 			},
 
 			/* feminine: uma, duas, vinte e uma, duzentas — "letra" is feminine */
 			pt(n) {
 				const u = ['zero', 'uma', 'duas', 'três', 'quatro', 'cinco', 'seis', 'sete', 'oito', 'nove', 'dez',
 					'onze', 'doze', 'treze', 'catorze', 'quinze', 'dezesseis', 'dezessete', 'dezoito', 'dezenove'];
+				const m_u = ['zero', 'um', 'dois', 'três', 'quatro', 'cinco', 'seis', 'sete', 'oito', 'nove'];
 				const t = ['', '', 'vinte', 'trinta', 'quarenta', 'cinquenta', 'sessenta', 'setenta', 'oitenta', 'noventa'];
 				const h = ['', 'cento', 'duzentas', 'trezentas', 'quatrocentas', 'quinhentas', 'seiscentas',
 					'setecentas', 'oitocentas', 'novecentas'];
@@ -1612,7 +1624,13 @@
 				if (n < 100) return `${t[Math.floor(n / 10)]}${n % 10 ? ' e ' + u[n % 10] : ''}`;
 				if (n === 100) return 'cem';
 				if (n < 1000) return `${h[Math.floor(n / 100)]}${n % 100 ? ' e ' + words.pt(n % 100) : ''}`;
-				return 'mais de mil';
+				if (n < 2000) return `mil${n % 1000 ? ' e ' + words.pt(n % 1000) : ''}`;
+				if (n < 10000) {
+					const r = n % 1000;
+					const sep = (r > 0 && r < 100) || (r % 100 === 0) ? ' e ' : ' ';
+					return `${m_u[Math.floor(n / 1000)]} mil${r ? sep + words.pt(r) : ''}`;
+				}
+				return 'mais de nove mil';
 			},
 
 			/* one word, units first: einundzwanzig, einhundertvier */
@@ -1629,7 +1647,11 @@
 					const hn = Math.floor(n / 100), r = n % 100;
 					return `${u[hn]}hundert${r ? words.de(r) : ''}`;
 				}
-				return 'mehr als tausend';
+				if (n < 10000) {
+					const tn = Math.floor(n / 1000), r = n % 1000;
+					return `${u[tn]}tausend${r ? words.de(r) : ''}`;
+				}
+				return 'mehr als neuntausend';
 			},
 
 			/* feminine: одна, две — "буква" is feminine */
@@ -1642,7 +1664,12 @@
 				if (n < 20) return u[n];
 				if (n < 100) return `${t[Math.floor(n / 10)]}${n % 10 ? ' ' + u[n % 10] : ''}`;
 				if (n < 1000) return `${h[Math.floor(n / 100)]}${n % 100 ? ' ' + words.ru(n % 100) : ''}`;
-				return 'больше тысячи';
+				if (n < 10000) {
+					const tn = Math.floor(n / 1000), r = n % 1000;
+					const t_word = tn === 1 ? 'одна тысяча' : (tn >= 2 && tn <= 4 ? u[tn] + ' тысячи' : u[tn] + ' тысяч');
+					return `${t_word}${r ? ' ' + words.ru(r) : ''}`;
+				}
+				return 'больше девяти тысяч';
 			},
 
 			/* 1–100 are all irregular in Urdu, so they are listed */
@@ -1660,9 +1687,15 @@
 				if (n <= 100) return w[n];
 				if (n < 1000) {
 					const hn = Math.floor(n / 100), r = n % 100;
-					return `${w[hn]} سو${r ? ' ' + w[r] : ''}`;
+					const h = hn === 1 ? 'ایک سو' : `${w[hn]} سو`;
+					return `${h}${r ? ' ' + words.ur(r) : ''}`;
 				}
-				return 'ایک ہزار سے زیادہ';
+				if (n < 10000) {
+					const tn = Math.floor(n / 1000), r = n % 1000;
+					const t = tn === 1 ? 'ایک ہزار' : `${w[tn]} ہزار`;
+					return `${t}${r ? ' ' + words.ur(r) : ''}`;
+				}
+				return 'نو ہزار سے زیادہ';
 			},
 
 			/* mốt / lăm / tư after mươi */
@@ -1684,7 +1717,14 @@
 					if (r < 10) return `${u[hn]} trăm linh ${u[r]}`;
 					return `${u[hn]} trăm ${words.vi(r)}`;
 				}
-				return 'hơn một nghìn';
+				if (n < 10000) {
+					const tn = Math.floor(n / 1000), r = n % 1000;
+					if (r === 0) return `${u[tn]} nghìn`;
+					if (r < 10) return `${u[tn]} nghìn không trăm linh ${u[r]}`;
+					if (r < 100) return `${u[tn]} nghìn không trăm ${words.vi(r)}`;
+					return `${u[tn]} nghìn ${words.vi(r)}`;
+				}
+				return 'hơn chín nghìn';
 			},
 
 			/* masculine noun حرف, so 3–10 take the ة form */
@@ -1705,7 +1745,13 @@
 					const hn = Math.floor(n / 100), r = n % 100;
 					return r ? `${hundreds[hn]} و${words.ar(r)}` : hundreds[hn];
 				}
-				return 'أكثر من ألف';
+				if (n < 2000) return `ألف${n % 1000 ? ' و' + words.ar(n % 1000) : ''}`;
+				if (n < 3000) return `ألفان${n % 1000 ? ' و' + words.ar(n % 1000) : ''}`;
+				if (n < 10000) {
+					const tn = Math.floor(n / 1000), r = n % 1000;
+					return `${ones[tn]} آلاف${r ? ' و' + words.ar(r) : ''}`;
+				}
+				return 'أكثر من تسعة آلاف';
 			},
 
 			sw(n) {
@@ -1721,7 +1767,15 @@
 					if (r < 10) return `${h} na ${u[r]}`;
 					return `${h} ${words.sw(r)}`;
 				}
-				return 'zaidi ya elfu moja';
+				if (n < 10000) {
+					const tn = Math.floor(n / 1000), r = n % 1000;
+					const th = `elfu ${u[tn]}`;
+					if (!r) return th;
+					if (r < 10) return `${th} na ${u[r]}`;
+					if (r < 100) return `${th} na ${words.sw(r)}`;
+					return `${th} ${words.sw(r)}`;
+				}
+				return 'zaidi ya elfu tisa';
 			},
 
 			tr(n) {
@@ -1734,7 +1788,12 @@
 					const pre = hn === 1 ? 'yüz' : `${u[hn]} yüz`;
 					return r ? `${pre} ${words.tr(r)}` : pre;
 				}
-				return 'binden fazla';
+				if (n < 10000) {
+					const tn = Math.floor(n / 1000), r = n % 1000;
+					const pre = tn === 1 ? 'bin' : `${u[tn]} bin`;
+					return r ? `${pre} ${words.tr(r)}` : pre;
+				}
+				return 'dokuz binden fazla';
 			},
 
 			tl(n) {
@@ -1764,7 +1823,15 @@
 					if (!r) return h;
 					return `${h}'t ${words.tl(r)}`;
 				}
-				return 'higit sa isang libo';
+				if (n < 10000) {
+					const tn = Math.floor(n / 1000), r = n % 1000;
+					const w = words.tl(tn);
+					const link = /[aeiou]$/i.test(w) ? 'ng' : (/n$/i.test(w) ? 'g' : ' na');
+					const th = `${w}${link} libo`;
+					if (!r) return th;
+					return `${th} at ${words.tl(r)}`;
+				}
+				return 'higit sa siyam na libo';
 			},
 
 			fa(n) {
@@ -1778,7 +1845,12 @@
 					const hn = Math.floor(n / 100), r = n % 100;
 					return r ? `${h[hn]} و ${words.fa(r)}` : h[hn];
 				}
-				return 'بیش از هزار';
+				if (n < 10000) {
+					const tn = Math.floor(n / 1000), r = n % 1000;
+					const th = ['', 'هزار', 'دو هزار', 'سه هزار', 'چهار هزار', 'پنج هزار', 'شش هزار', 'هفت هزار', 'هشت هزار', 'نه هزار'];
+					return r ? `${th[tn]} و ${words.fa(r)}` : th[tn];
+				}
+				return 'بیش از نه هزار';
 			},
 
 			/* feminine: una, ventuno, trentuno, centouno — "lettera" is feminine */
@@ -1801,7 +1873,12 @@
 					const hn = Math.floor(n / 100), r = n % 100;
 					return r ? `${h[hn]}${words.it(r)}` : h[hn];
 				}
-				return 'più di mille';
+				if (n < 2000) return `mille${n % 1000 ? words.it(n % 1000) : ''}`;
+				if (n < 10000) {
+					const tn = Math.floor(n / 1000), r = n % 1000;
+					return `${u[tn]}mila${r ? words.it(r) : ''}`;
+				}
+				return 'più di novemila';
 			}
 		};
 
@@ -1863,7 +1940,12 @@
 		/* Unicode-aware: Arabic, Cyrillic, Vietnamese diacritics and ß all count
 		   as letters; combining marks (Arabic harakat) do not. */
 		const LETTER = /\p{L}/gu;
-		const countLetters = value => (value.match(LETTER) || []).length;
+		const countLetters = value => {
+			let count = 0;
+			LETTER.lastIndex = 0;
+			while (LETTER.test(value)) count++;
+			return count;
+		};
 
 		/* ---------- The search ----------
 		   The sentence is always `${input} ${tail(n)}`, and the input does not
