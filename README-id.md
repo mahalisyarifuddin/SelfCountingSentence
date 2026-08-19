@@ -67,7 +67,7 @@ Hanya ekor yang bergantung pada *n*, sehingga:
 
 Solusi adalah titik tetap dari fungsi tersebut. Sebagian besar klausa pembuka memiliki satu solusi; beberapa (misalnya fragmen Inggris yang sangat pendek yang panjang ekornya melewati total yang diperlukan) tidak memiliki solusi, dan alat ini mengatakannya daripada mengembalikan hitungan yang salah.
 
-Pencarian menguji beberapa kandidat di dekat *b* untuk mengetahui panjang ekor pada magnitudo itu, lalu menelusuri pita hasilnya dari kiri agar solusi terkecil yang menang. Ekor di-memo per bahasa, sehingga beralih bahasa atau menekan Buat lagi memakai ulang hitungan sebelumnya.
+Pencarian menelusuri hingga 1000 nilai calon *n* mulai dari *b*, sehingga solusi terkecil dalam jendela itu yang menang dan jika gagal anggaran iterasi penuh benar-benar terpakai. Ekor di-memo per bahasa, sehingga beralih bahasa atau menekan Buat lagi memakai ulang hitungan sebelumnya.
 
 ## Bahasa yang Didukung
 

@@ -2091,34 +2091,20 @@
 		     letters(sentence) = base + letters(tail(n)),   base = letters(input)
 
 		 A candidate is judged from its tail alone — the (possibly very long)
-		 opening clause is counted once. n can only sit within one tail-length
-		 of base, and tail length grows slowly, so the map
+		 opening clause is counted once. A solution is any n with
+		 n = base + letters(tail(n)). Because a tail has at least one letter,
+		 n cannot sit below base, so the scan starts at max(base, 1) and walks
+		 upward. The smallest solution therefore wins.
 
-		     f(n) = base + letters(tail(n))
-
-		 is piecewise nearly constant. A few probes around the current
-		 magnitude learn tMin/tMax; the residual scan then walks only
-		 [base + tMin, base + tMax] from the left, so the smallest solution
-		 wins even on a clause with hundreds of thousands of letters.
-
-		 The band expands if a longer (or shorter) tail appears. HARD_CAP is
-		 the widest tail we will honour.
+		 MAX_ITERATIONS (1000) is the search budget: every generate() evaluates
+		 at most that many distinct n, and an unsuccessful run reports the full
+		 1000 rather than stopping after the first tight neighbourhood. Number
+		 words at this magnitude are tens of letters long, so a 1000-wide window
+		 is far wider than any feasible tail.
 
 		 Tails are memoised per language, so re-running — switching language,
-		 generating again, hitting Example — reuses the counts.
-
-		 EXPERIMENT (2026-08-19): Tested 1..1 000 000 letter bases across all 15
-		 languages using 1 000 iterations max. Highest converged iteration
-		 observed = 8, so the cap is headroom, not a limit that bites: the walk
-		 stops by itself once it converges, revisits an n, or leaves the band,
-		 and at most HARD_CAP distinct n exist. Set to the full experiment
-		 budget of 1 000. A non-converging chain may now wander a few probes
-		 further before the residual scan takes over, which can nudge the
-		 reported iteration count; the sentence chosen is unchanged, since the
-		 scan still walks from the left and returns the smallest solution.
-		 HARD_CAP remains 400 (enough for 1 M letter inputs; max tail ~66). */
-		const HARD_CAP = 400;
-		const PROBE_STEPS = 1000;  // iteration cap; converges by ~8 in the 1M-scale experiment
+		 generating again, hitting Example — reuses the counts. */
+		const MAX_ITERATIONS = 1000;
 		const tailCache = new Map();
 
 		function tailFor(lang, n) {
@@ -2135,59 +2121,20 @@
 		const SentenceGenerator = {
 			generate(input, lang) {
 				const base = countLetters(input);
-				const hardHi = base + HARD_CAP;
-				const tried = new Map();
-				let examined = 0;
-				let tMin = Infinity, tMax = 0;
+				let n = Math.max(base, 1);
 
-				const evalN = n => {
-					let entry = tried.get(n);
-					if (!entry) {
-						entry = tailFor(lang, n);
-						tried.set(n, entry);
-						examined++;
-						if (entry.letters < tMin) tMin = entry.letters;
-						if (entry.letters > tMax) tMax = entry.letters;
+				for (let step = 1; step <= MAX_ITERATIONS; step++) {
+					const entry = tailFor(lang, n);
+					if (base + entry.letters === n) {
+						return { sentence: `${input} ${entry.value}`, stable: true, iterations: step };
 					}
-					return entry;
-				};
-
-				// Probe the neighbourhood so tMin/tMax sit near this magnitude.
-				// Do not return from a probe: a later, smaller n may also work,
-				// and the documented examples always use the smallest solution.
-				const sampleAt = Math.max(base, 1);
-				evalN(sampleAt);
-				let n = base + tried.get(sampleAt).letters;
-				for (let step = 0; step < PROBE_STEPS; step++) {
-					if (n < 1 || n > hardHi) break;
-					evalN(n);
-					const next = base + tried.get(n).letters;
-					if (next === n || tried.has(next)) break;
-					n = next;
-				}
-
-				if (!Number.isFinite(tMin)) { tMin = 1; tMax = 48; }
-				let lo = Math.max(1, base + Math.max(1, tMin - 4));
-				let hi = Math.min(hardHi, base + tMax + 4);
-
-				for (let k = lo; k <= hi; k++) {
-					const entry = evalN(k);
-					if (base + entry.letters === k) {
-						return { sentence: `${input} ${entry.value}`, stable: true, iterations: examined };
-					}
-					const reach = base + entry.letters;
-					if (reach > hi && hi < hardHi) hi = Math.min(reach + 4, hardHi);
-					if (reach < lo && reach >= 1) {
-						hi = Math.max(hi, k);
-						lo = reach;
-						k = lo - 1;
-					}
+					n++;
 				}
 
 				return {
 					sentence: `${input} ${(text[lang] || text.en).unableToGenerate}`,
 					stable: false,
-					iterations: examined
+					iterations: MAX_ITERATIONS
 				};
 			}
 		};
