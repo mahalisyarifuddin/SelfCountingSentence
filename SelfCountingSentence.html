@@ -1,0 +1,1813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+	<meta name="color-scheme" content="light dark">
+	<title>Self-Referential Sentence Generator</title>
+	<style>
+		/* =====================================================================
+		   SHARED DESIGN CORE — identical in every app. Do not edit in place.
+		   Edit /core.css, then run sync_core.py to push it to all apps.
+
+		   Order: 1) tokens  2) reset/base  3) app shell  4) components.
+		   App-specific rules go in the APP-SPECIFIC block below this one, so
+		   they win on equal specificity without needing !important.
+		   ===================================================================== */
+
+		/* ---------- 1. Tokens: light (default) ----------
+		   Style against these, never raw hex: every token has a dark twin, so
+		   anything built from them themes itself for free. */
+		:root {
+			/* brand */
+			--primary: #005dac;
+			--on-primary: #ffffff;
+			--hover: #00539a;
+			--primary-container: #d4e3ff;
+			--on-primary-container: #001c3a;
+
+			/* surfaces */
+			--background: #f9f9ff;
+			--surface: #ffffff;
+			--surface-variant: #f2f3fc;
+			--muted: #f2f3fc;
+
+			/* text */
+			--text: #181c21;
+			--text-muted: #5a6069;
+			--text-secondary: #5a6069;
+
+			/* lines */
+			--border: #c1c6d4;
+			--border-strong: #8f95a3;
+
+			/* status */
+			--success: #0b6b1d;
+			--on-success: #ffffff;
+			--success-bg: #d7f5d8;
+			--danger: #ba1a1a;
+			--error: #ba1a1a;
+			--on-danger: #ffffff;
+			--danger-bg: #ffdad6;
+			--warning: #8a5000;
+			--on-warning: #ffffff;
+			--warning-bg: #ffedd5;
+			--warning-text: #9a3412;
+			--accent: #f57c00;
+			--accent-bg: #fff8f0;
+			--highlight-bg: #d4e3ff;
+
+			/* elevation */
+			--shadow-1: 0 1px 2px rgba(0, 0, 0, .06), 0 1px 3px rgba(0, 0, 0, .08);
+			--shadow-2: 0 4px 12px rgba(0, 0, 0, .12);
+			--scrim: rgba(0, 0, 0, .38);
+
+			/* shape */
+			--radius-sm: 4px;
+			--radius: 8px;
+			--radius-lg: 12px;
+			--radius-pill: 999px;
+
+			/* spacing scale */
+			--sp-1: .25rem;
+			--sp-2: .5rem;
+			--sp-3: .75rem;
+			--sp-4: 1rem;
+			--sp-5: 1.5rem;
+			--sp-6: 2rem;
+
+			/* type */
+			--font-sans: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+			--font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+
+			/* layout — each app overrides this with its tier:
+		   720 single-column · 960 standard · 1200 wide · 1600 dense/two-rail */
+			--content-max: 960px;
+
+			/* controls */
+			--control-h: 42px;
+		}
+
+		/* ---------- 1b. Tokens: dark ----------
+		   Duplicated on purpose: the media query serves "auto", the .dark class
+		   serves an explicit choice. Change a value here and in .dark together. */
+		@media (prefers-color-scheme: dark) {
+			:root:not(.light) {
+				--primary: #a5c8ff;
+				--on-primary: #00315f;
+				--hover: #72adff;
+				--primary-container: #00468a;
+				--on-primary-container: #d4e3ff;
+
+				--background: #101319;
+				--surface: #0b0e14;
+				--surface-variant: #181c21;
+				--muted: #181c21;
+
+				--text: #e0e2ea;
+				--text-muted: #a9b0bd;
+				--text-secondary: #a9b0bd;
+
+				--border: #414752;
+				--border-strong: #6b7280;
+
+				--success: #82db7e;
+				--on-success: #00390a;
+				--success-bg: #0b2a10;
+				--danger: #ffb4ab;
+				--error: #ffb4ab;
+				--on-danger: #93000a;
+				--danger-bg: #3b0907;
+				--warning: #ffb95c;
+				--on-warning: #3d2600;
+				--warning-bg: #2b1c00;
+				--warning-text: #ffd8a8;
+				--accent: #ffb95c;
+				--accent-bg: #1f1600;
+				--highlight-bg: #001c3a;
+
+				--shadow-1: 0 1px 2px rgba(0, 0, 0, .5), 0 1px 3px rgba(0, 0, 0, .4);
+				--shadow-2: 0 4px 12px rgba(0, 0, 0, .55);
+				--scrim: rgba(0, 0, 0, .6);
+			}
+		}
+
+		:root.dark {
+			--primary: #a5c8ff;
+			--on-primary: #00315f;
+			--hover: #72adff;
+			--primary-container: #00468a;
+			--on-primary-container: #d4e3ff;
+
+			--background: #101319;
+			--surface: #0b0e14;
+			--surface-variant: #181c21;
+			--muted: #181c21;
+
+			--text: #e0e2ea;
+			--text-muted: #a9b0bd;
+			--text-secondary: #a9b0bd;
+
+			--border: #414752;
+			--border-strong: #6b7280;
+
+			--success: #82db7e;
+			--on-success: #00390a;
+			--success-bg: #0b2a10;
+			--danger: #ffb4ab;
+			--error: #ffb4ab;
+			--on-danger: #93000a;
+			--danger-bg: #3b0907;
+			--warning: #ffb95c;
+			--on-warning: #3d2600;
+			--warning-bg: #2b1c00;
+			--warning-text: #ffd8a8;
+			--accent: #ffb95c;
+			--accent-bg: #1f1600;
+			--highlight-bg: #001c3a;
+
+			--shadow-1: 0 1px 2px rgba(0, 0, 0, .5), 0 1px 3px rgba(0, 0, 0, .4);
+			--shadow-2: 0 4px 12px rgba(0, 0, 0, .55);
+			--scrim: rgba(0, 0, 0, .6);
+		}
+
+		/* ---------- 2. Reset & base ----------
+		   Headings are wrapped in :where() so they carry zero specificity — an
+		   app can restyle h2 with a bare `h2 { }` and win. */
+		*,
+		*::before,
+		*::after {
+			box-sizing: border-box;
+			margin: 0;
+			padding: 0;
+		}
+
+		html {
+			-webkit-text-size-adjust: 100%;
+		}
+
+		body {
+			background: var(--background);
+			color: var(--text);
+			font-family: var(--font-sans);
+			font-size: 1rem;
+			line-height: 1.5;
+			min-height: 100vh;
+			min-height: 100dvh;
+			padding: var(--sp-5) var(--sp-4);
+			display: flex;
+			flex-direction: column;
+			gap: var(--sp-5);
+			-webkit-font-smoothing: antialiased;
+		}
+
+		:where(h1, h2, h3, h4, h5, h6) {
+			line-height: 1.25;
+			font-weight: 600;
+			text-wrap: balance;
+		}
+
+		:where(h1) { font-size: 1.5rem; }
+		:where(h2) { font-size: 1.125rem; }
+		:where(h3) { font-size: 1rem; }
+		:where(h4, h5, h6) { font-size: .9375rem; }
+
+		a {
+			color: var(--primary);
+			text-decoration-thickness: 1px;
+			text-underline-offset: 2px;
+		}
+
+		:focus-visible {
+			outline: 2px solid var(--primary);
+			outline-offset: 2px;
+			border-radius: var(--radius-sm);
+		}
+
+		::selection {
+			background: var(--primary-container);
+			color: var(--on-primary-container);
+		}
+
+		@media (prefers-reduced-motion: reduce) {
+			*,
+			*::before,
+			*::after {
+				animation-duration: .01ms !important;
+				animation-iteration-count: 1 !important;
+				transition-duration: .01ms !important;
+				scroll-behavior: auto !important;
+			}
+		}
+
+		/* ---------- 3. App shell ----------
+		   Header and main share --content-max, so every app lines up on the same
+		   optical column whatever its width tier.
+
+		   No page footer exists here, on purpose. Decorative footers (app name,
+		   source link, "runs in your browser") are omitted; anything genuinely
+		   useful goes in a .disclosure at the end of .app-main. */
+		.app-header,
+		.app-main {
+			width: 100%;
+			max-width: var(--content-max);
+			margin-inline: auto;
+		}
+
+		.app-header {
+			display: flex;
+			align-items: flex-start;
+			justify-content: space-between;
+			gap: var(--sp-4);
+			flex-wrap: wrap;
+		}
+
+		.app-title-group {
+			flex: 1 1 16rem;
+			display: flex;
+			flex-direction: column;
+			gap: var(--sp-1);
+			min-width: 0;
+		}
+
+		.app-title-group h1 {
+			font-size: 1.5rem;
+			letter-spacing: -.01em;
+		}
+
+		.app-subtitle {
+			color: var(--text-muted);
+			font-size: .9375rem;
+			max-width: 68ch;
+		}
+
+		.app-controls {
+			display: flex;
+			align-items: center;
+			gap: var(--sp-2);
+			flex-shrink: 0;
+		}
+
+		.app-main {
+			display: flex;
+			flex-direction: column;
+			gap: var(--sp-5);
+			flex: 1;
+		}
+
+		/* ---------- 4. Components ---------- */
+
+		/* The one surface primitive: every panel is a .card. Add .card-subtle
+		   for a nested block that must read as *inside* another card. */
+		.card {
+			background: var(--surface);
+			border: 1px solid var(--border);
+			border-radius: var(--radius-lg);
+			padding: var(--sp-5);
+			min-width: 0;
+		}
+
+		.card > h2,
+		.card-title {
+			font-size: 1.125rem;
+			margin-bottom: var(--sp-4);
+		}
+
+		.card-subtle {
+			background: var(--surface-variant);
+		}
+
+		/* Buttons. The bare <button> element is the primary action, so most
+		   markup needs no class. Add .secondary (outline), .danger, .ghost, or
+		   .btn-icon (square, icon-only). Keep one primary per view. */
+		button,
+		.btn {
+			font: inherit;
+			font-weight: 500;
+			line-height: 1.2;
+			background: var(--primary);
+			color: var(--on-primary);
+			border: 1px solid transparent;
+			border-radius: var(--radius);
+			padding: 0 var(--sp-4);
+			min-height: var(--control-h);
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			gap: var(--sp-2);
+			cursor: pointer;
+			transition: background-color .15s, border-color .15s, color .15s;
+		}
+
+		button:hover,
+		.btn:hover {
+			background: var(--hover);
+		}
+
+		button:disabled,
+		.btn:disabled {
+			opacity: .5;
+			cursor: not-allowed;
+		}
+
+		button.secondary,
+		.btn-secondary {
+			background: transparent;
+			color: var(--primary);
+			border-color: var(--border);
+		}
+
+		button.secondary:hover,
+		.btn-secondary:hover {
+			background: var(--surface-variant);
+		}
+
+		button.danger,
+		.btn-danger {
+			background: var(--danger);
+			color: var(--on-danger);
+		}
+
+		button.danger:hover,
+		.btn-danger:hover {
+			filter: brightness(.92);
+			background: var(--danger);
+		}
+
+		button.ghost,
+		.btn-ghost {
+			background: transparent;
+			color: var(--text);
+			border-color: transparent;
+		}
+
+		button.ghost:hover,
+		.btn-ghost:hover {
+			background: var(--surface-variant);
+		}
+
+		/* Square icon-only button — the Settings trigger and every dialog close.
+		   Apps that make buttons full width must exclude it; see the
+		   :not(:where(.btn-icon)) pattern in generator / OpenDensityTool. */
+		.btn-icon {
+			background: transparent;
+			color: var(--text);
+			border: 1px solid var(--border);
+			border-radius: var(--radius);
+			width: var(--control-h);
+			min-height: var(--control-h);
+			padding: 0;
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			flex-shrink: 0;
+		}
+
+		.btn-icon:hover {
+			background: var(--surface-variant);
+			color: var(--text);
+		}
+
+		.btn-icon svg {
+			width: 20px;
+			height: 20px;
+			display: block;
+		}
+
+		/* Form controls. Inputs, selects and textareas are full width by design:
+		   width is controlled by the .field / .row wrapper, not the control. */
+		label {
+			display: block;
+			font-size: .875rem;
+			font-weight: 500;
+			color: var(--text);
+			margin-bottom: var(--sp-1);
+		}
+
+		input,
+		select,
+		textarea {
+			font: inherit;
+			color: var(--text);
+			background: var(--surface);
+			border: 1px solid var(--border);
+			border-radius: var(--radius);
+			padding: var(--sp-2) var(--sp-3);
+			min-height: var(--control-h);
+			width: 100%;
+			max-width: 100%;
+		}
+
+		select {
+			cursor: pointer;
+			appearance: none;
+			padding-right: 2rem;
+			background-image: linear-gradient(45deg, transparent 50%, currentColor 50%),
+				linear-gradient(135deg, currentColor 50%, transparent 50%);
+			background-position: right 1.05rem center, right .8rem center;
+			background-size: .3rem .3rem, .3rem .3rem;
+			background-repeat: no-repeat;
+		}
+
+		textarea {
+			min-height: 7rem;
+			resize: vertical;
+			line-height: 1.5;
+		}
+
+		input:hover,
+		select:hover,
+		textarea:hover {
+			border-color: var(--border-strong);
+		}
+
+		input:focus,
+		select:focus,
+		textarea:focus {
+			border-color: var(--primary);
+		}
+
+		input[type="checkbox"],
+		input[type="radio"] {
+			width: 1.125rem;
+			height: 1.125rem;
+			min-height: 0;
+			accent-color: var(--primary);
+			cursor: pointer;
+			flex-shrink: 0;
+		}
+
+		input[type="range"] {
+			padding: 0;
+			min-height: 0;
+			border: 0;
+			background: transparent;
+			accent-color: var(--primary);
+		}
+
+		input[type="color"] {
+			padding: var(--sp-1);
+			cursor: pointer;
+		}
+
+		input[type="file"] {
+			padding: var(--sp-2);
+		}
+
+		input:disabled,
+		select:disabled,
+		textarea:disabled {
+			background: var(--surface-variant);
+			color: var(--text-muted);
+			cursor: not-allowed;
+		}
+
+		/* Form layout. .field stacks one label + control; .row places fields side
+		   by side. Set the column count on the row itself — style="--cols:3" —
+		   and the responsive rules at the bottom handle the collapse. */
+		.field {
+			display: flex;
+			flex-direction: column;
+			min-width: 0;
+			flex: 1;
+		}
+
+		.row {
+			display: grid;
+			grid-template-columns: repeat(var(--cols, 2), minmax(0, 1fr));
+			gap: var(--sp-4);
+			align-items: start;
+		}
+
+		.row-flex {
+			display: flex;
+			flex-wrap: wrap;
+			gap: var(--sp-3);
+			align-items: center;
+		}
+
+		.check {
+			display: flex;
+			align-items: center;
+			gap: var(--sp-2);
+			font-weight: 400;
+			margin-bottom: 0;
+			cursor: pointer;
+		}
+
+		.hint {
+			color: var(--text-muted);
+			font-size: .8125rem;
+			margin-top: var(--sp-1);
+		}
+
+		/* Tabs. Mark the active one with .active AND aria-selected="true" so
+		   assistive tech and the styling never disagree. */
+		.tabs {
+			display: flex;
+			gap: var(--sp-1);
+			border-bottom: 1px solid var(--border);
+			overflow-x: auto;
+			scrollbar-width: none;
+		}
+
+		.tabs::-webkit-scrollbar {
+			display: none;
+		}
+
+		.tab {
+			background: transparent;
+			color: var(--text-muted);
+			border: 0;
+			border-bottom: 2px solid transparent;
+			border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+			padding: 0 var(--sp-4);
+			white-space: nowrap;
+		}
+
+		.tab:hover {
+			background: var(--surface-variant);
+			color: var(--text);
+		}
+
+		.tab.active {
+			color: var(--primary);
+			border-bottom-color: var(--primary);
+			background: transparent;
+		}
+
+		/* Tables. Cells never wrap; wrap the table in .table-wrap so wide data
+		   scrolls sideways instead of bursting the card. */
+		.table-wrap {
+			overflow-x: auto;
+			-webkit-overflow-scrolling: touch;
+		}
+
+		table {
+			width: 100%;
+			border-collapse: collapse;
+			font-variant-numeric: tabular-nums;
+		}
+
+		th,
+		td {
+			text-align: left;
+			padding: var(--sp-2) var(--sp-3);
+			border-bottom: 1px solid var(--border);
+			white-space: nowrap;
+		}
+
+		th {
+			font-size: .8125rem;
+			font-weight: 600;
+			color: var(--text-muted);
+			background: var(--surface-variant);
+			position: sticky;
+			top: 0;
+		}
+
+		tbody tr:last-child td {
+			border-bottom: 0;
+		}
+
+		/* Small status pills. Use the semantic variant, not a colour name, so
+		   meaning survives a palette change. */
+		.badge {
+			display: inline-flex;
+			align-items: center;
+			gap: var(--sp-1);
+			font-size: .75rem;
+			font-weight: 600;
+			padding: var(--sp-1) var(--sp-2);
+			border-radius: var(--radius-pill);
+			background: var(--surface-variant);
+			color: var(--text-muted);
+			white-space: nowrap;
+		}
+
+		.badge-success { background: var(--success-bg); color: var(--success); }
+		.badge-danger  { background: var(--danger-bg);  color: var(--danger); }
+		.badge-warning { background: var(--warning-bg); color: var(--warning-text); }
+
+		/* Block-level callouts for explanation or warning. For secondary detail
+		   nobody needs up front, prefer .disclosure below. */
+		.notice {
+			border: 1px solid var(--border);
+			border-left: 3px solid var(--primary);
+			background: var(--surface-variant);
+			border-radius: var(--radius);
+			padding: var(--sp-3) var(--sp-4);
+			font-size: .875rem;
+		}
+
+		.notice-warning { border-left-color: var(--accent); background: var(--warning-bg); color: var(--warning-text); }
+		.notice-danger  { border-left-color: var(--danger); background: var(--danger-bg);  color: var(--danger); }
+
+		/* ---------- Disclosure ----------
+		   Where methodology, references and shortcuts live. Collapsed by default
+		   so it never competes with the tool. This replaces the page footer —
+		   if there is nothing worth reading, omit the block entirely. */
+		.disclosure {
+			background: var(--surface-variant);
+			border: 1px solid var(--border);
+			border-radius: var(--radius);
+			padding: var(--sp-3) var(--sp-4);
+		}
+
+		.disclosure > summary {
+			cursor: pointer;
+			font-size: .875rem;
+			font-weight: 600;
+			color: var(--text-muted);
+			display: flex;
+			align-items: center;
+			gap: var(--sp-2);
+			list-style: none;
+			user-select: none;
+		}
+
+		.disclosure > summary::-webkit-details-marker { display: none; }
+
+		.disclosure > summary::before {
+			content: "";
+			width: 0;
+			height: 0;
+			border-left: 5px solid currentColor;
+			border-top: 4px solid transparent;
+			border-bottom: 4px solid transparent;
+			transition: transform .2s;
+			flex-shrink: 0;
+		}
+
+		.disclosure[open] > summary::before { transform: rotate(90deg); }
+		.disclosure > summary:hover { color: var(--primary); }
+		.disclosure[open] > summary { margin-bottom: var(--sp-3); }
+
+		.disclosure-body {
+			font-size: .875rem;
+			line-height: 1.7;
+			color: var(--text-muted);
+		}
+
+		.disclosure-body > * + * { margin-top: var(--sp-3); }
+
+		.disclosure-body ul,
+		.disclosure-body ol { padding-left: 1.25rem; }
+
+		.disclosure-body li + li { margin-top: var(--sp-1); }
+
+		.disclosure-body pre,
+		.disclosure-body code {
+			font-family: var(--font-mono);
+			font-size: .8125rem;
+		}
+
+		.disclosure-body pre {
+			background: var(--surface);
+			border: 1px solid var(--border);
+			border-radius: var(--radius-sm);
+			padding: var(--sp-3);
+			white-space: pre-wrap;
+			overflow-x: auto;
+		}
+
+		/* ---------- Settings dialog ----------
+		   Every app has one, opened by the header's .btn-icon. Structure is
+		   .sheet-header / .sheet-body / .sheet-footer; only the body scrolls.
+		   Open and close it via AppSettings.wireSheet, never showModal directly,
+		   or the no-<dialog> fallback below is bypassed. */
+		dialog.sheet {
+			border: 1px solid var(--border);
+			border-radius: var(--radius-lg);
+			background: var(--surface);
+			color: var(--text);
+			padding: 0;
+			width: min(420px, calc(100vw - 2rem));
+			box-shadow: var(--shadow-2);
+			margin: auto;
+			/* The sheet itself never scrolls; .sheet-body is the only scroller,
+			   otherwise the UA default max-height produces a second scrollbar. */
+			max-height: calc(100vh - 2rem);
+			max-height: calc(100dvh - 2rem);
+			overflow: hidden;
+		}
+
+		dialog.sheet[open] {
+			display: flex;
+			flex-direction: column;
+		}
+
+		/* Works whether the sections are wrapped in a <form method="dialog">
+		   or sit directly inside the dialog. */
+		dialog.sheet > form {
+			display: flex;
+			flex-direction: column;
+			flex: 1 1 auto;
+			min-height: 0;
+		}
+
+		/* Literal colours, never var(): ::backdrop did not inherit from its
+		   dialog before Chrome 122, so a custom property resolves to nothing,
+		   the declaration is invalid, and the backdrop falls back to
+		   transparent. That is the classic "dialog does not dim" bug. */
+		dialog.sheet::backdrop {
+			background: rgba(0, 0, 0, .38);
+		}
+
+		@media (prefers-color-scheme: dark) {
+			:root:not(.light) dialog.sheet::backdrop {
+				background: rgba(0, 0, 0, .6);
+			}
+		}
+
+		:root.dark dialog.sheet::backdrop {
+			background: rgba(0, 0, 0, .6);
+		}
+
+		/* Dimming. Two paths only:
+		   1. ::backdrop — every browser that has modal <dialog>.
+		   2. .sheet-scrim — a real element the script inserts when showModal()
+		      is missing (pre-2022 Safari/Firefox).
+
+		   Everything in path 2 must stay old-CSS-safe: no inset, no :where,
+		   no @supports selector(). Those all postdate the browsers it serves,
+		   which is exactly how the previous version silently did nothing. */
+
+		/* No <dialog> support means no UA rule hiding a closed dialog, so the
+		   sheet would sit inline in the page. Spell it out. */
+		dialog.sheet:not([open]) {
+			display: none;
+		}
+
+		html.has-open-sheet {
+			overflow: hidden;
+		}
+
+		.sheet-scrim {
+			position: fixed;
+			top: 0;
+			right: 0;
+			bottom: 0;
+			left: 0;
+			background: var(--scrim);
+			z-index: 998;
+		}
+
+		dialog.sheet-fallback {
+			display: flex;
+			position: fixed;
+			top: 50%;
+			left: 50%;
+			right: auto;
+			bottom: auto;
+			-webkit-transform: translate(-50%, -50%);
+			transform: translate(-50%, -50%);
+			z-index: 999;
+		}
+
+		.sheet-header {
+			flex: 0 0 auto;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			gap: var(--sp-4);
+			padding: var(--sp-4) var(--sp-5);
+			border-bottom: 1px solid var(--border);
+		}
+
+		.sheet-header h2 {
+			font-size: 1.0625rem;
+		}
+
+		.sheet-body {
+			padding: var(--sp-5);
+			display: flex;
+			flex-direction: column;
+			gap: var(--sp-4);
+			flex: 1 1 auto;
+			min-height: 0;
+			overflow-y: auto;
+			overscroll-behavior: contain;
+		}
+
+		.sheet-footer {
+			flex: 0 0 auto;
+			padding: var(--sp-4) var(--sp-5);
+			border-top: 1px solid var(--border);
+			display: flex;
+			justify-content: flex-end;
+			gap: var(--sp-2);
+		}
+
+		/* ---------- Utilities ----------
+		   Deliberately few. If you reach for a stack of these on one element,
+		   the component is missing a class instead. */
+		.hidden { display: none !important; }
+		.sr-only {
+			position: absolute;
+			width: 1px;
+			height: 1px;
+			padding: 0;
+			overflow: hidden;
+			clip: rect(0 0 0 0);
+			white-space: nowrap;
+			border: 0;
+		}
+		.mono { font-family: var(--font-mono); }
+		.muted { color: var(--text-muted); }
+		.nums { font-variant-numeric: tabular-nums; }
+		.stack { display: flex; flex-direction: column; gap: var(--sp-4); }
+		.grow { flex: 1; }
+
+		/* ---------- Responsive ----------
+		   Column counts are preserved on desktop and collapse predictably:
+		   >=4 cols -> 2 cols on tablet -> 1 col on phone. */
+		@media (max-width: 900px) {
+			.row {
+				grid-template-columns: repeat(min(var(--cols, 2), 2), minmax(0, 1fr));
+			}
+		}
+
+		@media (max-width: 600px) {
+			body {
+				padding: var(--sp-4) var(--sp-3);
+				gap: var(--sp-4);
+			}
+
+			.card {
+				padding: var(--sp-4);
+			}
+
+			.app-header {
+				gap: var(--sp-3);
+				align-items: center;
+				flex-wrap: nowrap;
+			}
+
+			/* full-width action buttons stack rather than squeeze */
+			.row-flex > .grow {
+				flex-basis: 100%;
+			}
+
+			.app-title-group h1 {
+				font-size: 1.25rem;
+			}
+
+			.row {
+				grid-template-columns: 1fr;
+			}
+
+			/* let tabs bleed to the card edge, but only inside a card */
+			.card > .tabs,
+			.card > * > .tabs {
+				margin-inline: calc(var(--sp-4) * -1);
+				padding-inline: var(--sp-4);
+			}
+		}
+
+		/* =====================================================================
+		   APP-SPECIFIC STYLES — the only part of this file you edit freely.
+
+		   It sits after the core, so a plain selector beats the core's on equal
+		   specificity: no !important needed. Two traps worth knowing:
+		     · core .row sets align-items:start — restate it if you make .row flex
+		     · a blanket `button { }` outranks .btn-icon; use
+		       button:not(:where(.btn-icon)) so the Settings gear stays square
+
+		   Pick the width tier below to match the content, not the screen:
+		   720 single-column · 960 standard · 1200 wide · 1600 dense/two-rail
+		   ===================================================================== */
+		:root {
+			--content-max: 720px;
+		}
+
+		#output {
+			background: var(--surface-variant);
+			border: 1px solid var(--border);
+			border-radius: var(--radius);
+			padding: var(--sp-4);
+			font-size: 1.0625rem;
+			line-height: 1.6;
+		}
+
+		#output:empty {
+			display: none;
+		}
+
+		#output.error {
+			background: var(--danger-bg);
+			border-color: var(--danger);
+			color: var(--danger);
+		}
+
+		#outputInfo:empty {
+			display: none;
+		}
+	</style>
+</head>
+
+<body>
+	<!-- Header. Title and one-line subtitle on the left, Settings on the right.
+	     The gear needs no label text: the shared script sets its accessible
+	     name from the current language. -->
+	<header class="app-header">
+		<div class="app-title-group">
+			<h1 id="title">Self-Referential Sentence Generator</h1>
+			<p id="subtitle" class="app-subtitle">Completes your text with a phrase that correctly counts its own letters.</p>
+		</div>
+		<div class="app-controls">
+			<button id="settingsBtn" class="btn-icon" type="button" aria-label="Settings" title="Settings">
+				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+					<circle cx="12" cy="12" r="3"></circle>
+					<path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+				</svg>
+			</button>
+		</div>
+	</header>
+
+	<!-- Main. One .card per logical group; the shell spaces them for you. -->
+	<main class="app-main">
+		<section class="card">
+			<div class="field">
+				<label id="labelInput" for="input">Input text</label>
+				<input type="text" id="input" autocomplete="off" spellcheck="false">
+				<p class="hint" id="inputHint">Write the opening clause; the count and the word for
+					“letters” are appended in the selected language.</p>
+			</div>
+
+			<div class="row-flex" style="margin-top:var(--sp-4)">
+				<span class="grow"></span>
+				<button type="button" class="secondary" id="exampleBtn">Example</button>
+				<button type="button" id="generate">Generate sentence</button>
+			</div>
+		</section>
+
+		<section class="card">
+			<h2 class="card-title" id="resultTitle">Result</h2>
+			<div class="stack">
+				<div id="output" role="status"></div>
+				<p id="outputInfo" class="hint"></p>
+			</div>
+		</section>
+	</main>
+
+	<!-- Settings dialog. The ids matter: #prefTitle, #langLabel, #themeLabel and
+	     the three theme <option>s are filled by the shared script, which is why
+	     they ship empty. Add app preferences as further .field blocks. -->
+	<dialog id="settingsDialog" class="sheet" aria-labelledby="prefTitle">
+		<form method="dialog">
+			<div class="sheet-header">
+				<h2 id="prefTitle"></h2>
+				<button class="btn-icon" value="close" aria-label="Close settings">
+					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+						<path d="M18 6 6 18M6 6l12 12"></path>
+					</svg>
+				</button>
+			</div>
+			<div class="sheet-body">
+				<div class="field">
+					<label id="langLabel" for="language"></label>
+					<select id="language">
+						<option value="en">English</option>
+						<option value="id">Bahasa Indonesia</option>
+						<option value="es">Español</option>
+						<option value="ar">العربية</option>
+						<option value="fr">Français</option>
+						<option value="pt">Português</option>
+						<option value="ur">اردو</option>
+						<option value="ru">Русский</option>
+						<option value="de">Deutsch</option>
+						<option value="vi">Tiếng Việt</option>
+					</select>
+				</div>
+				<div class="field">
+					<label id="themeLabel" for="theme"></label>
+					<select id="theme">
+						<option value="auto"></option>
+						<option value="light"></option>
+						<option value="dark"></option>
+					</select>
+				</div>
+			</div>
+			<div class="sheet-footer">
+				<button value="close">Done</button>
+			</div>
+		</form>
+	</dialog>
+
+	<script>
+		/* =====================================================================
+		   SHARED SETTINGS BEHAVIOUR — identical in every app. Do not edit here.
+		   Edit /shared-settings.js, then run sync_core.py.
+
+		   Owns theme, language and the settings dialog so all apps behave the
+		   same. Runs before app code, so window.AppSettings is ready by the time
+		   an app's constructor executes.
+
+		   An app is expected to:
+		     1. set AppSettings.strings = <its translation table>
+		     2. call AppSettings.detectLang(...) once to choose a start language
+		     3. delegate its own theme()/lang() to applyTheme()/applyLang()
+		   Persistence stays with the app; this layer never touches storage.
+		   ===================================================================== */
+		(function () {
+			const root = document.documentElement;
+			const $ = id => document.getElementById(id);
+
+			/* Last-resort settings copy, used key-by-key when the app has no
+			   translation table (or is missing a key). Keeps apps without an i18n
+			   layer looking identical to those with one. */
+			const FALLBACK = {
+				en: { prefTitle: 'Settings', prefBtn: 'Settings', langLabel: 'Language',
+					themeLabel: 'Theme', themeAuto: 'Auto', themeLight: 'Light', themeDark: 'Dark' },
+				id: { prefTitle: 'Pengaturan', prefBtn: 'Pengaturan', langLabel: 'Bahasa',
+					themeLabel: 'Tema', themeAuto: 'Otomatis', themeLight: 'Terang', themeDark: 'Gelap' }
+			};
+
+			const AppSettings = {
+				/* The app's table, shaped { en: ..., id: ... }. Assign it as soon as it
+				   is defined — renderSettings reads it on the first applyLang. */
+				strings: null,
+				/* Applies a theme and returns the value actually used.
+				   'auto' clears both classes and defers to prefers-color-scheme.
+				   Idempotent; also syncs the #theme select and fires 'themechange' on
+				   <html> for canvas apps that must repaint. */
+				applyTheme(value) {
+					const v = (value === 'light' || value === 'dark') ? value : 'auto';
+					root.classList.remove('light', 'dark');
+					if (v !== 'auto') root.classList.add(v);
+					const sel = $('theme');
+					if (sel && sel.value !== v) sel.value = v;
+					root.dispatchEvent(new CustomEvent('themechange', { detail: { theme: v } }));
+					return v;
+				},
+
+				/* Switches language: updates <html lang>, the #language select and the
+				   dialog copy. Returns the value applied. Call this from the app's own
+				   lang() rather than touching <html> directly. */
+				applyLang(value) {
+					const sel = $('language');
+					const v = value || (sel && sel.value) || 'en';
+					root.lang = v;
+					if (sel && sel.value !== v) sel.value = v;
+					this.renderSettings(v);
+					return v;
+				},
+
+				/* Repaints the dialog copy: title, both field labels, the three theme
+				   option names, and the trigger's accessible name. Driven entirely by ids
+				   (#prefTitle, #langLabel, #themeLabel), so markup needs the right ids and
+				   nothing else. */
+				renderSettings(lang) {
+					const l = lang || root.lang || 'en';
+					const app = (this.strings && this.strings[l]) || {};
+					const base = FALLBACK[l] || FALLBACK.en;
+					const s = {};
+					for (const k of Object.keys(FALLBACK.en)) s[k] = app[k] || base[k] || FALLBACK.en[k];
+
+					['prefTitle', 'langLabel', 'themeLabel'].forEach(id => {
+						const e = $(id);
+						if (e) e.textContent = s[id];
+					});
+
+					const sel = $('theme');
+					if (sel) [...sel.options].forEach(o => {
+						const k = 'theme' + o.value.charAt(0).toUpperCase() + o.value.slice(1);
+						if (s[k]) o.textContent = s[k];
+					});
+
+					['settingsBtn', 'prefBtn', 'openSettings'].forEach(id => {
+						const b = $(id);
+						if (b) { b.setAttribute('aria-label', s.prefBtn); b.title = s.prefBtn; }
+					});
+					return s;
+				},
+
+				/* Best browser language the app actually ships, e.g.
+				   detectLang(Object.keys(text)). Walks navigator.languages in order and
+				   matches region subtags ('id-ID' -> 'id'); falls back to list[0]. */
+				detectLang(available) {
+					const list = (available && available.length) ? available : ['en'];
+					const tags = (navigator.languages && navigator.languages.length)
+						? navigator.languages : [navigator.language || 'en'];
+					for (const tag of tags) {
+						const t = String(tag).toLowerCase();
+						const hit = list.find(l => t === String(l).toLowerCase()
+							|| t.startsWith(String(l).toLowerCase() + '-'));
+						if (hit) return hit;
+					}
+					return list[0];
+				}
+			};
+
+			/* Modal <dialog> landed in Safari 15.4 / Firefox 98. Older engines get a
+			   non-modal open plus our own scrim, stacking and scroll lock, so the
+			   dialog still dims the page instead of appearing inline. */
+			const CAN_MODAL = typeof HTMLDialogElement !== 'undefined'
+				&& typeof HTMLDialogElement.prototype.showModal === 'function';
+
+			/* The scrim is a real node, not a root pseudo-element, so it needs no
+			   modern CSS and can take the click-to-close itself. */
+			function addScrim(dialog) {
+				var scrim = document.querySelector('.sheet-scrim');
+				if (!scrim) {
+					scrim = document.createElement('div');
+					scrim.className = 'sheet-scrim';
+					document.body.appendChild(scrim);
+				}
+				scrim.onclick = function () { AppSettings.closeSheet(dialog); };
+			}
+
+			function removeScrim() {
+				var scrim = document.querySelector('.sheet-scrim');
+				if (scrim && scrim.parentNode) scrim.parentNode.removeChild(scrim);
+			}
+
+			/* Don't assume ::backdrop painted — engines differ on whether it can be
+			   styled and whether it inherits. Measure it, and supply our own scrim
+			   when it came out transparent, whatever the reason. */
+			function backdropPaints(dialog) {
+				var bg;
+				try { bg = window.getComputedStyle(dialog, '::backdrop').backgroundColor; }
+				catch (e) { return false; }
+				if (!bg || bg === 'transparent' || bg === 'none') return false;
+				var parts = bg.replace(/\s+/g, '').match(/^rgba?\(([^)]+)\)$/);
+				if (!parts) return true;                       // named or hex: it paints
+				var channels = parts[1].split(',');
+				return channels.length < 4 || parseFloat(channels[3]) > 0;
+			}
+
+			AppSettings.openSheet = function (dialog) {
+				if (!dialog) return;
+				if (CAN_MODAL) {
+					try {
+						if (!dialog.open) dialog.showModal();
+						if (!backdropPaints(dialog)) addScrim(dialog);
+						return;
+					} catch (e) { /* wedged dialog: fall through and open it manually */ }
+				}
+				dialog.setAttribute('open', '');
+				dialog.classList.add('sheet-fallback');
+				root.classList.add('has-open-sheet');
+				addScrim(dialog);
+			};
+
+			AppSettings.closeSheet = function (dialog) {
+				if (!dialog) return;
+				if (CAN_MODAL) {
+					if (dialog.open) dialog.close();
+					return;
+				}
+				dialog.removeAttribute('open');
+				dialog.classList.remove('sheet-fallback');
+				root.classList.remove('has-open-sheet');
+				removeScrim();
+			};
+
+			/* Wires a trigger + dialog pair once: open on click, close on backdrop
+			   click, plus — on the fallback path only — Escape and form submit, which
+			   native <dialog> already handles. Use this for every dialog; calling
+			   showModal() directly skips the fallback. */
+			AppSettings.wireSheet = function (btn, dialog) {
+				if (!btn || !dialog || dialog.dataset.sheetWired) return;
+				dialog.dataset.sheetWired = '1';
+				btn.addEventListener('click', () => AppSettings.openSheet(dialog));
+				dialog.addEventListener('click', e => {
+					if (e.target === dialog) AppSettings.closeSheet(dialog);
+				});
+				dialog.addEventListener('close', () => {
+					dialog.classList.remove('sheet-fallback');
+					root.classList.remove('has-open-sheet');
+					removeScrim();
+				});
+				if (!CAN_MODAL) {
+					dialog.addEventListener('submit', e => { e.preventDefault(); AppSettings.closeSheet(dialog); });
+					document.addEventListener('keydown', e => {
+						if (e.key === 'Escape' && dialog.hasAttribute('open')) AppSettings.closeSheet(dialog);
+					});
+				}
+			};
+
+			window.AppSettings = AppSettings;
+
+			/* CSS reacts to an OS scheme change on its own; this only re-fires
+			   'themechange' so canvas apps (which bake colours into pixels) know to
+			   redraw. Silent unless the user is on 'auto'. */
+			window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+				const sel = $('theme');
+				if (!sel || sel.value === 'auto') {
+					root.dispatchEvent(new CustomEvent('themechange', { detail: { theme: 'auto' } }));
+				}
+			});
+
+			document.addEventListener('DOMContentLoaded', () => {
+				/* Baseline wiring so a bare #theme / #language select works with no app
+				   code at all. Apps with their own handlers keep them — both run, and
+				   apply* are idempotent. */
+				const themeSel = $('theme');
+				if (themeSel) {
+					themeSel.addEventListener('change', e => AppSettings.applyTheme(e.target.value));
+					AppSettings.applyTheme(themeSel.value);
+				}
+				const langSel = $('language');
+				if (langSel) {
+					langSel.addEventListener('change', e => AppSettings.applyLang(e.target.value));
+					AppSettings.applyLang(langSel.value);
+				} else {
+					AppSettings.renderSettings();
+				}
+
+				/* The conventional pair. Apps using other ids (HijriCalc,
+				   OpenDensityTool) call wireSheet themselves. */
+				AppSettings.wireSheet($('settingsBtn'), $('settingsDialog'));
+			});
+		})();
+	</script>
+
+	<script>
+		/* ============ App logic ============
+		   Theme, language and the dialog are handled by the shared layer above.
+
+		   Ten languages. Each one contributes three things:
+		     1. UI copy in `text` — including the seven settings keys, because the
+		        shared FALLBACK only ships en/id.
+		     2. A number speller in `words`.
+		     3. A `tail` builder: the numeral, the word for "letters" in whatever
+		        form that number demands, and the sentence terminator.
+
+		   The counted noun is where the languages disagree, so the tail is a
+		   function rather than a fixed suffix:
+		     · es/fr/pt/ru — "letter" is feminine, so 1/2/21… inflect the numeral
+		     · de          — singular noun after any numeral ending in "ein"
+		     · ru          — буква / буквы / букв by the 1–2/4–many rule
+		     · ar          — full tamyīz: حرفان for 2, أحرف for 3–10,
+		                     حرفًا for 11–99, حرف after 100
+		     · ur          — Urdu ends the sentence with ۔, not a period
+		   ===================================================================== */
+		const text = {
+			en: {
+				title: 'Self-Referential Sentence Generator',
+				subtitle: 'Completes your text with a phrase that correctly counts its own letters.',
+				labelInput: 'Input text',
+				inputHint: 'Write the opening clause; the count and the word for “letters” are appended in the selected language.',
+				placeholder: 'This sentence has',
+				generate: 'Generate sentence',
+				exampleBtn: 'Example',
+				resultTitle: 'Result',
+				errorEmpty: 'Please enter some text first.',
+				unableToGenerate: '[unable to generate stable sentence]',
+				stableInfo: n => `Stable after ${n} iterations.`,
+				unstableInfo: n => `No stable solution found. Gave up after ${n} iterations.`
+			},
+			id: {
+				title: 'Pembuat Kalimat Merujuk Diri',
+				subtitle: 'Melengkapi teks Anda dengan frasa yang menghitung jumlah hurufnya sendiri dengan benar.',
+				labelInput: 'Teks masukan',
+				inputHint: 'Tulis klausa pembuka; jumlah dan kata “huruf” akan ditambahkan dalam bahasa yang dipilih.',
+				placeholder: 'Kalimat ini memiliki',
+				generate: 'Buat kalimat',
+				exampleBtn: 'Contoh',
+				resultTitle: 'Hasil',
+				errorEmpty: 'Mohon masukkan teks terlebih dahulu.',
+				unableToGenerate: '[tidak dapat menghasilkan kalimat stabil]',
+				stableInfo: n => `Stabil setelah ${n} iterasi.`,
+				unstableInfo: n => `Tidak ditemukan solusi stabil. Berhenti setelah ${n} iterasi.`
+			},
+			es: {
+				title: 'Generador de Frases Autorreferentes',
+				subtitle: 'Completa tu texto con una frase que cuenta correctamente sus propias letras.',
+				labelInput: 'Texto de entrada',
+				inputHint: 'Escribe la oración inicial; el número y la palabra “letras” se añaden en el idioma elegido.',
+				placeholder: 'Esta oración tiene',
+				generate: 'Generar frase',
+				exampleBtn: 'Ejemplo',
+				resultTitle: 'Resultado',
+				errorEmpty: 'Primero escribe algún texto.',
+				unableToGenerate: '[no se pudo generar una frase estable]',
+				stableInfo: n => `Estable tras ${n} iteraciones.`,
+				unstableInfo: n => `No se encontró una solución estable. Se detuvo tras ${n} iteraciones.`,
+				prefTitle: 'Ajustes', prefBtn: 'Ajustes', langLabel: 'Idioma',
+				themeLabel: 'Tema', themeAuto: 'Automático', themeLight: 'Claro', themeDark: 'Oscuro'
+			},
+			ar: {
+				title: 'مولّد الجمل ذاتية الإشارة',
+				subtitle: 'يكمل نصك بعبارة تَعُدّ حروفها بنفسها عدًّا صحيحًا.',
+				labelInput: 'النص المُدخل',
+				inputHint: 'اكتب بداية الجملة؛ يُضاف العدد وكلمة «حرف» باللغة المختارة.',
+				placeholder: 'هذه الجملة فيها',
+				generate: 'توليد الجملة',
+				exampleBtn: 'مثال',
+				resultTitle: 'النتيجة',
+				errorEmpty: 'يرجى إدخال نص أولًا.',
+				unableToGenerate: '[تعذّر توليد جملة مستقرة]',
+				stableInfo: n => `استقرت بعد ${n} تكرارًا.`,
+				unstableInfo: n => `لم يُعثر على حل مستقر. توقف البحث بعد ${n} تكرارًا.`,
+				prefTitle: 'الإعدادات', prefBtn: 'الإعدادات', langLabel: 'اللغة',
+				themeLabel: 'السمة', themeAuto: 'تلقائي', themeLight: 'فاتح', themeDark: 'داكن'
+			},
+			fr: {
+				title: 'Générateur de Phrases Autoréférentes',
+				subtitle: 'Complète votre texte par une phrase qui compte correctement ses propres lettres.',
+				labelInput: 'Texte saisi',
+				inputHint: 'Écrivez le début de la phrase ; le nombre et le mot « lettres » sont ajoutés dans la langue choisie.',
+				placeholder: 'Cette phrase compte',
+				generate: 'Générer la phrase',
+				exampleBtn: 'Exemple',
+				resultTitle: 'Résultat',
+				errorEmpty: 'Veuillez d’abord saisir du texte.',
+				unableToGenerate: '[impossible de générer une phrase stable]',
+				stableInfo: n => `Stable après ${n} itérations.`,
+				unstableInfo: n => `Aucune solution stable trouvée. Arrêt après ${n} itérations.`,
+				prefTitle: 'Paramètres', prefBtn: 'Paramètres', langLabel: 'Langue',
+				themeLabel: 'Thème', themeAuto: 'Automatique', themeLight: 'Clair', themeDark: 'Sombre'
+			},
+			pt: {
+				title: 'Gerador de Frases Autorreferentes',
+				subtitle: 'Completa o seu texto com uma frase que conta corretamente as próprias letras.',
+				labelInput: 'Texto de entrada',
+				inputHint: 'Escreva a oração inicial; o número e a palavra “letras” são acrescentados no idioma escolhido.',
+				placeholder: 'Esta frase tem',
+				generate: 'Gerar frase',
+				exampleBtn: 'Exemplo',
+				resultTitle: 'Resultado',
+				errorEmpty: 'Digite algum texto primeiro.',
+				unableToGenerate: '[não foi possível gerar uma frase estável]',
+				stableInfo: n => `Estável após ${n} iterações.`,
+				unstableInfo: n => `Nenhuma solução estável encontrada. Parou após ${n} iterações.`,
+				prefTitle: 'Configurações', prefBtn: 'Configurações', langLabel: 'Idioma',
+				themeLabel: 'Tema', themeAuto: 'Automático', themeLight: 'Claro', themeDark: 'Escuro'
+			},
+			ur: {
+				title: 'خود حوالہ جملہ ساز',
+				subtitle: 'آپ کے متن کو ایسے جملے سے مکمل کرتا ہے جو اپنے حروف خود درست گنتا ہے۔',
+				labelInput: 'داخل کردہ متن',
+				inputHint: 'جملے کا آغاز لکھیے؛ تعداد اور لفظ «حروف» منتخب زبان میں شامل کر دیے جائیں گے۔',
+				placeholder: 'اس جملے میں',
+				generate: 'جملہ بنائیں',
+				exampleBtn: 'مثال',
+				resultTitle: 'نتیجہ',
+				errorEmpty: 'پہلے کچھ متن لکھیں۔',
+				unableToGenerate: '[مستحکم جملہ نہیں بن سکا]',
+				stableInfo: n => `${n} تکرار کے بعد مستحکم۔`,
+				unstableInfo: n => `کوئی مستحکم حل نہیں ملا۔ ${n} تکرار کے بعد تلاش روک دی گئی۔`,
+				prefTitle: 'ترتیبات', prefBtn: 'ترتیبات', langLabel: 'زبان',
+				themeLabel: 'تھیم', themeAuto: 'خودکار', themeLight: 'روشن', themeDark: 'تاریک'
+			},
+			ru: {
+				title: 'Генератор самореферентных предложений',
+				subtitle: 'Дополняет ваш текст фразой, которая правильно считает собственные буквы.',
+				labelInput: 'Исходный текст',
+				inputHint: 'Напишите начало предложения; число и слово «буквы» добавятся на выбранном языке.',
+				placeholder: 'В этом предложении',
+				generate: 'Создать предложение',
+				exampleBtn: 'Пример',
+				resultTitle: 'Результат',
+				errorEmpty: 'Сначала введите текст.',
+				unableToGenerate: '[не удалось построить устойчивое предложение]',
+				stableInfo: n => `Устойчиво после ${n} ${n % 10 === 1 && n % 100 !== 11 ? 'итерации' : 'итераций'}.`,
+				unstableInfo: n => `Устойчивое решение не найдено. Поиск остановлен после ${n} итераций.`,
+				prefTitle: 'Настройки', prefBtn: 'Настройки', langLabel: 'Язык',
+				themeLabel: 'Тема', themeAuto: 'Авто', themeLight: 'Светлая', themeDark: 'Тёмная'
+			},
+			de: {
+				title: 'Generator für selbstbezügliche Sätze',
+				subtitle: 'Ergänzt Ihren Text um eine Wendung, die ihre eigenen Buchstaben korrekt zählt.',
+				labelInput: 'Eingabetext',
+				inputHint: 'Schreiben Sie den Satzanfang; Anzahl und das Wort „Buchstaben“ werden in der gewählten Sprache angehängt.',
+				placeholder: 'Dieser Satz hat',
+				generate: 'Satz erzeugen',
+				exampleBtn: 'Beispiel',
+				resultTitle: 'Ergebnis',
+				errorEmpty: 'Bitte zuerst einen Text eingeben.',
+				unableToGenerate: '[kein stabiler Satz möglich]',
+				stableInfo: n => `Stabil nach ${n} Iterationen.`,
+				unstableInfo: n => `Keine stabile Lösung gefunden. Abbruch nach ${n} Iterationen.`,
+				prefTitle: 'Einstellungen', prefBtn: 'Einstellungen', langLabel: 'Sprache',
+				themeLabel: 'Design', themeAuto: 'Automatisch', themeLight: 'Hell', themeDark: 'Dunkel'
+			},
+			vi: {
+				title: 'Trình tạo câu tự quy chiếu',
+				subtitle: 'Hoàn thiện văn bản của bạn bằng một mệnh đề tự đếm đúng số chữ cái của chính nó.',
+				labelInput: 'Văn bản nhập',
+				inputHint: 'Viết mệnh đề mở đầu; số đếm và cụm “chữ cái” sẽ được thêm theo ngôn ngữ đã chọn.',
+				placeholder: 'Câu này có',
+				generate: 'Tạo câu',
+				exampleBtn: 'Ví dụ',
+				resultTitle: 'Kết quả',
+				errorEmpty: 'Vui lòng nhập văn bản trước.',
+				unableToGenerate: '[không thể tạo câu ổn định]',
+				stableInfo: n => `Ổn định sau ${n} lần lặp.`,
+				unstableInfo: n => `Không tìm thấy nghiệm ổn định. Dừng sau ${n} lần lặp.`,
+				prefTitle: 'Cài đặt', prefBtn: 'Cài đặt', langLabel: 'Ngôn ngữ',
+				themeLabel: 'Giao diện', themeAuto: 'Tự động', themeLight: 'Sáng', themeDark: 'Tối'
+			}
+		};
+
+		const RTL = ['ar', 'ur'];
+
+		/* ---------- Number spellers ----------
+		   Each returns the numeral in the form the counted noun requires. */
+		const words = {
+			id(n) {
+				const u = ['nol', 'satu', 'dua', 'tiga', 'empat', 'lima', 'enam', 'tujuh', 'delapan', 'sembilan', 'sepuluh', 'sebelas'];
+				if (n < 12) return u[n];
+				if (n < 20) return `${u[n % 10]} belas`;
+				if (n < 100) return `${u[Math.floor(n / 10)]} puluh${n % 10 ? ' ' + u[n % 10] : ''}`;
+				if (n < 200) return `seratus${n > 100 ? ' ' + words.id(n % 100) : ''}`;
+				if (n < 1000) return `${u[Math.floor(n / 100)]} ratus${n % 100 ? ' ' + words.id(n % 100) : ''}`;
+				return 'lebih dari seribu';
+			},
+
+			en(n) {
+				const u = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten',
+					'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'];
+				const t = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
+				if (n < 20) return u[n];
+				if (n < 100) return `${t[Math.floor(n / 10)]}${n % 10 ? '-' + u[n % 10] : ''}`;
+				if (n < 1000) return `${u[Math.floor(n / 100)]} hundred${n % 100 ? ' ' + words.en(n % 100) : ''}`;
+				return 'more than a thousand';
+			},
+
+			/* feminine: una, veintiuna, doscientas — "letra" is feminine */
+			es(n) {
+				const u = ['cero', 'una', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve', 'diez',
+					'once', 'doce', 'trece', 'catorce', 'quince', 'dieciséis', 'diecisiete', 'dieciocho', 'diecinueve',
+					'veinte', 'veintiuna', 'veintidós', 'veintitrés', 'veinticuatro', 'veinticinco', 'veintiséis',
+					'veintisiete', 'veintiocho', 'veintinueve'];
+				const t = ['', '', '', 'treinta', 'cuarenta', 'cincuenta', 'sesenta', 'setenta', 'ochenta', 'noventa'];
+				const h = ['', 'ciento', 'doscientas', 'trescientas', 'cuatrocientas', 'quinientas', 'seiscientas',
+					'setecientas', 'ochocientas', 'novecientas'];
+				if (n < 30) return u[n];
+				if (n < 100) return `${t[Math.floor(n / 10)]}${n % 10 ? ' y ' + u[n % 10] : ''}`;
+				if (n === 100) return 'cien';
+				if (n < 1000) return `${h[Math.floor(n / 100)]}${n % 100 ? ' ' + words.es(n % 100) : ''}`;
+				return 'más de mil';
+			},
+
+			/* feminine: une, vingt et une, quatre-vingt-une — "lettre" is feminine */
+			fr(n) {
+				const u = ['zéro', 'une', 'deux', 'trois', 'quatre', 'cinq', 'six', 'sept', 'huit', 'neuf', 'dix',
+					'onze', 'douze', 'treize', 'quatorze', 'quinze', 'seize', 'dix-sept', 'dix-huit', 'dix-neuf'];
+				const t = { 2: 'vingt', 3: 'trente', 4: 'quarante', 5: 'cinquante', 6: 'soixante' };
+				if (n < 20) return u[n];
+				if (n < 70) {
+					const base = t[Math.floor(n / 10)], r = n % 10;
+					if (r === 0) return base;
+					if (r === 1) return `${base} et une`;
+					return `${base}-${u[r]}`;
+				}
+				if (n < 80) {                                   // 70–79: soixante-dix…
+					const r = n - 60;
+					return r === 11 ? 'soixante et onze' : `soixante-${u[r]}`;
+				}
+				if (n < 100) {                                  // 80–99: quatre-vingt…
+					const r = n - 80;
+					return r === 0 ? 'quatre-vingts' : `quatre-vingt-${u[r]}`;
+				}
+				if (n < 1000) {
+					const hn = Math.floor(n / 100), r = n % 100;
+					let pre = hn === 1 ? 'cent' : `${u[hn]} cent`;
+					if (r === 0 && hn > 1) pre += 's';
+					return r ? `${pre} ${words.fr(r)}` : pre;
+				}
+				return 'plus de mille';
+			},
+
+			/* feminine: uma, duas, vinte e uma, duzentas — "letra" is feminine */
+			pt(n) {
+				const u = ['zero', 'uma', 'duas', 'três', 'quatro', 'cinco', 'seis', 'sete', 'oito', 'nove', 'dez',
+					'onze', 'doze', 'treze', 'catorze', 'quinze', 'dezesseis', 'dezessete', 'dezoito', 'dezenove'];
+				const t = ['', '', 'vinte', 'trinta', 'quarenta', 'cinquenta', 'sessenta', 'setenta', 'oitenta', 'noventa'];
+				const h = ['', 'cento', 'duzentas', 'trezentas', 'quatrocentas', 'quinhentas', 'seiscentas',
+					'setecentas', 'oitocentas', 'novecentas'];
+				if (n < 20) return u[n];
+				if (n < 100) return `${t[Math.floor(n / 10)]}${n % 10 ? ' e ' + u[n % 10] : ''}`;
+				if (n === 100) return 'cem';
+				if (n < 1000) return `${h[Math.floor(n / 100)]}${n % 100 ? ' e ' + words.pt(n % 100) : ''}`;
+				return 'mais de mil';
+			},
+
+			/* one word, units first: einundzwanzig, einhundertvier */
+			de(n) {
+				const u = ['null', 'ein', 'zwei', 'drei', 'vier', 'fünf', 'sechs', 'sieben', 'acht', 'neun', 'zehn',
+					'elf', 'zwölf', 'dreizehn', 'vierzehn', 'fünfzehn', 'sechzehn', 'siebzehn', 'achtzehn', 'neunzehn'];
+				const t = ['', '', 'zwanzig', 'dreißig', 'vierzig', 'fünfzig', 'sechzig', 'siebzig', 'achtzig', 'neunzig'];
+				if (n < 20) return u[n];
+				if (n < 100) {
+					const r = n % 10;
+					return r === 0 ? t[Math.floor(n / 10)] : `${u[r]}und${t[Math.floor(n / 10)]}`;
+				}
+				if (n < 1000) {
+					const hn = Math.floor(n / 100), r = n % 100;
+					return `${u[hn]}hundert${r ? words.de(r) : ''}`;
+				}
+				return 'mehr als tausend';
+			},
+
+			/* feminine: одна, две — "буква" is feminine */
+			ru(n) {
+				const u = ['ноль', 'одна', 'две', 'три', 'четыре', 'пять', 'шесть', 'семь', 'восемь', 'девять', 'десять',
+					'одиннадцать', 'двенадцать', 'тринадцать', 'четырнадцать', 'пятнадцать', 'шестнадцать',
+					'семнадцать', 'восемнадцать', 'девятнадцать'];
+				const t = ['', '', 'двадцать', 'тридцать', 'сорок', 'пятьдесят', 'шестьдесят', 'семьдесят', 'восемьдесят', 'девяносто'];
+				const h = ['', 'сто', 'двести', 'триста', 'четыреста', 'пятьсот', 'шестьсот', 'семьсот', 'восемьсот', 'девятьсот'];
+				if (n < 20) return u[n];
+				if (n < 100) return `${t[Math.floor(n / 10)]}${n % 10 ? ' ' + u[n % 10] : ''}`;
+				if (n < 1000) return `${h[Math.floor(n / 100)]}${n % 100 ? ' ' + words.ru(n % 100) : ''}`;
+				return 'больше тысячи';
+			},
+
+			/* 1–100 are all irregular in Urdu, so they are listed */
+			ur(n) {
+				const w = ['صفر', 'ایک', 'دو', 'تین', 'چار', 'پانچ', 'چھ', 'سات', 'آٹھ', 'نو', 'دس',
+					'گیارہ', 'بارہ', 'تیرہ', 'چودہ', 'پندرہ', 'سولہ', 'سترہ', 'اٹھارہ', 'انیس', 'بیس',
+					'اکیس', 'بائیس', 'تیئس', 'چوبیس', 'پچیس', 'چھبیس', 'ستائیس', 'اٹھائیس', 'انتیس', 'تیس',
+					'اکتیس', 'بتیس', 'تینتیس', 'چونتیس', 'پینتیس', 'چھتیس', 'سینتیس', 'اڑتیس', 'انتالیس', 'چالیس',
+					'اکتالیس', 'بیالیس', 'تینتالیس', 'چوالیس', 'پینتالیس', 'چھیالیس', 'سینتالیس', 'اڑتالیس', 'انچاس', 'پچاس',
+					'اکاون', 'باون', 'ترپن', 'چون', 'پچپن', 'چھپن', 'ستاون', 'اٹھاون', 'انسٹھ', 'ساٹھ',
+					'اکسٹھ', 'باسٹھ', 'ترسٹھ', 'چونسٹھ', 'پینسٹھ', 'چھیاسٹھ', 'سڑسٹھ', 'اڑسٹھ', 'انہتر', 'ستر',
+					'اکہتر', 'بہتر', 'تہتر', 'چوہتر', 'پچہتر', 'چھہتر', 'ستتر', 'اٹھہتر', 'اناسی', 'اسی',
+					'اکیاسی', 'بیاسی', 'تراسی', 'چوراسی', 'پچاسی', 'چھیاسی', 'ستاسی', 'اٹھاسی', 'نواسی', 'نوے',
+					'اکانوے', 'بانوے', 'ترانوے', 'چورانوے', 'پچانوے', 'چھیانوے', 'ستانوے', 'اٹھانوے', 'ننانوے', 'سو'];
+				if (n <= 100) return w[n];
+				if (n < 1000) {
+					const hn = Math.floor(n / 100), r = n % 100;
+					return `${w[hn]} سو${r ? ' ' + w[r] : ''}`;
+				}
+				return 'ایک ہزار سے زیادہ';
+			},
+
+			/* mốt / lăm / tư after mươi */
+			vi(n) {
+				const u = ['không', 'một', 'hai', 'ba', 'bốn', 'năm', 'sáu', 'bảy', 'tám', 'chín'];
+				if (n < 10) return u[n];
+				if (n < 20) {
+					const r = n % 10;
+					return `mười${r ? ' ' + (r === 5 ? 'lăm' : u[r]) : ''}`;
+				}
+				if (n < 100) {
+					const r = n % 10;
+					const last = r === 1 ? 'mốt' : r === 4 ? 'tư' : r === 5 ? 'lăm' : u[r];
+					return `${u[Math.floor(n / 10)]} mươi${r ? ' ' + last : ''}`;
+				}
+				if (n < 1000) {
+					const hn = Math.floor(n / 100), r = n % 100;
+					if (r === 0) return `${u[hn]} trăm`;
+					if (r < 10) return `${u[hn]} trăm linh ${u[r]}`;
+					return `${u[hn]} trăm ${words.vi(r)}`;
+				}
+				return 'hơn một nghìn';
+			},
+
+			/* masculine noun حرف, so 3–10 take the ة form */
+			ar(n) {
+				const ones = ['صفر', 'واحد', 'اثنان', 'ثلاثة', 'أربعة', 'خمسة', 'ستة', 'سبعة', 'ثمانية', 'تسعة'];
+				const teens = ['عشرة', 'أحد عشر', 'اثنا عشر', 'ثلاثة عشر', 'أربعة عشر', 'خمسة عشر',
+					'ستة عشر', 'سبعة عشر', 'ثمانية عشر', 'تسعة عشر'];
+				const tens = ['', '', 'عشرون', 'ثلاثون', 'أربعون', 'خمسون', 'ستون', 'سبعون', 'ثمانون', 'تسعون'];
+				const hundreds = ['', 'مائة', 'مائتان', 'ثلاثمائة', 'أربعمائة', 'خمسمائة', 'ستمائة',
+					'سبعمائة', 'ثمانمائة', 'تسعمائة'];
+				if (n < 10) return ones[n];
+				if (n < 20) return teens[n - 10];
+				if (n < 100) {
+					const r = n % 10;
+					return r ? `${ones[r]} و${tens[Math.floor(n / 10)]}` : tens[Math.floor(n / 10)];
+				}
+				if (n < 1000) {
+					const hn = Math.floor(n / 100), r = n % 100;
+					return r ? `${hundreds[hn]} و${words.ar(r)}` : hundreds[hn];
+				}
+				return 'أكثر من ألف';
+			}
+		};
+
+		/* ---------- The counted tail ----------
+		   numeral + the word for "letters" in the form this number demands +
+		   the sentence terminator. */
+		const tail = {
+			en: n => `${words.en(n)} ${n === 1 ? 'letter' : 'letters'}.`,
+			id: n => `${words.id(n)} huruf.`,
+			es: n => `${words.es(n)} ${n === 1 ? 'letra' : 'letras'}.`,
+			fr: n => `${words.fr(n)} ${n === 1 ? 'lettre' : 'lettres'}.`,
+			pt: n => `${words.pt(n)} ${n === 1 ? 'letra' : 'letras'}.`,
+			vi: n => `${words.vi(n)} chữ cái.`,
+			ur: n => `${words.ur(n)} ${n === 1 ? 'حرف' : 'حروف'}۔`,
+
+			/* singular noun after any numeral ending in "ein": ein Buchstabe,
+			   einhundertein Buchstabe — but einundzwanzig Buchstaben */
+			de(n) {
+				const w = words.de(n);
+				return `${w} ${w.endsWith('ein') ? 'Buchstabe' : 'Buchstaben'}.`;
+			},
+
+			/* 1 буква · 2–4 буквы · 5–20 букв, with the 11–14 exception */
+			ru(n) {
+				const mod10 = n % 10, mod100 = n % 100;
+				const noun = (mod10 === 1 && mod100 !== 11) ? 'буква'
+					: (mod10 >= 2 && mod10 <= 4 && !(mod100 >= 12 && mod100 <= 14)) ? 'буквы'
+						: 'букв';
+				return `${words.ru(n)} ${noun}.`;
+			},
+
+			/* Arabic counted-noun agreement (tamyīz):
+			   1 حرف واحد · 2 حرفان · 3–10 plural genitive · 11–99 singular
+			   accusative · 100+ singular genitive */
+			ar(n) {
+				if (n === 1) return 'حرف واحد.';
+				if (n === 2) return 'حرفان.';
+				if (n <= 10) return `${words.ar(n)} أحرف.`;
+				if (n % 100 === 0 || (n > 100 && n % 100 === 0)) return `${words.ar(n)} حرف.`;
+				if (n < 100) return `${words.ar(n)} حرفًا.`;
+				const r = n % 100;
+				if (r === 1 || r === 2) return `${words.ar(n)} حرف.`;
+				return `${words.ar(n)} ${r <= 10 ? 'أحرف' : 'حرفًا'}.`;
+			}
+		};
+
+		const elements = new Proxy({}, { get: (_, id) => document.getElementById(id) });
+
+		/* Unicode-aware: Arabic, Cyrillic, Vietnamese diacritics and ß all count
+		   as letters; combining marks (Arabic harakat) do not. */
+		const LETTER = /\p{L}/gu;
+		const countLetters = value => (value.match(LETTER) || []).length;
+
+		/* ---------- The search ----------
+		   The sentence is always `${input} ${tail(n)}`, and the input does not
+		   change while we search, so
+
+		       letters(sentence) = base + letters(tail(n)),   base = letters(input)
+
+		   Two things fall out of that identity, and both are pure profit:
+
+		   1. A candidate can be judged from its tail alone. No rebuilding the
+		      sentence, no re-scanning the input — which is the long part of the
+		      string and was being re-counted on every single candidate.
+		   2. A solution satisfies n - base === letters(tail(n)), so n can only
+		      sit within one tail-length of base. The widest tail any of the ten
+		      languages produces is 39 letters, so WINDOW candidates cover the
+		      entire feasible range; the old loop walked 400, of which ~90% were
+		      arithmetically impossible.
+
+		   The window still grows itself if some language ever yields a longer
+		   tail, so the search stays exhaustive rather than merely lucky: when it
+		   reports "no stable solution", every candidate that could have worked
+		   has been checked.
+
+		   Tails are memoised per language, so re-running — switching language,
+		   pressing Enter again, hitting Example — reuses the counts. */
+		const WINDOW = 48;
+		const HARD_CAP = 400;
+		const tailCache = new Map();
+
+		function tailFor(lang, n) {
+			const key = `${lang}:${n}`;
+			let entry = tailCache.get(key);
+			if (entry === undefined) {
+				const value = (tail[lang] || tail.en)(n);
+				entry = { value, letters: countLetters(value) };
+				tailCache.set(key, entry);
+			}
+			return entry;
+		}
+
+		const SentenceGenerator = {
+			generate(input, lang) {
+				const base = countLetters(input);
+				const hardLimit = base + HARD_CAP;
+				let limit = base + WINDOW;
+				let examined = 0;
+
+				for (let n = base + 1; n <= limit; n++) {
+					const entry = tailFor(lang, n);
+					examined++;
+					if (base + entry.letters === n) {
+						// Only the winner is ever assembled into a full sentence.
+						return { sentence: `${input} ${entry.value}`, stable: true, iterations: examined };
+					}
+					// A tail longer than the window assumed means the feasible range
+					// reaches further than we thought; widen it instead of missing it.
+					const reach = base + entry.letters;
+					if (reach > limit && limit < hardLimit) limit = Math.min(reach, hardLimit);
+				}
+
+				return {
+					sentence: `${input} ${(text[lang] || text.en).unableToGenerate}`,
+					stable: false,
+					iterations: examined
+				};
+			}
+		};
+
+		class SentenceApp {
+			constructor() {
+				AppSettings.strings = text;
+				this.language = AppSettings.detectLang(Object.keys(text));
+				this.setup();
+				this.lang(this.language);
+			}
+
+			setup() {
+				elements.language.addEventListener('change', e => this.lang(e.target.value));
+				elements.input.addEventListener('keyup', e => {
+					if (e.key === 'Enter') this.generateSentence();
+				});
+				elements.generate.addEventListener('click', () => this.generateSentence());
+				elements.exampleBtn.addEventListener('click', () => {
+					elements.input.value = this.string('placeholder');
+					this.generateSentence();
+				});
+			}
+
+			string(key) { return text[this.language]?.[key] ?? text.en[key] ?? key; }
+
+			lang(language) {
+				const previousExample = text[this.language]?.placeholder;
+				this.language = AppSettings.applyLang(language);
+
+				['title', 'subtitle', 'labelInput', 'inputHint', 'generate', 'exampleBtn', 'resultTitle']
+					.forEach(key => {
+						if (elements[key]) elements[key].textContent = this.string(key);
+					});
+				document.title = this.string('title');
+				elements.input.placeholder = this.string('placeholder');
+
+				// Arabic and Urdu flip the whole shell, not just the result text.
+				document.documentElement.dir = RTL.includes(this.language) ? 'rtl' : 'ltr';
+
+				// A sentence only counts its own letters in the language it was
+				// built for, so re-run it — or clear it if the text was ours.
+				if (elements.input.value.trim() === previousExample) {
+					elements.input.value = this.string('placeholder');
+				}
+				if (elements.output.textContent.trim()) this.generateSentence();
+			}
+
+			generateSentence() {
+				const input = elements.input.value.trim();
+				if (!input) {
+					this.showError(this.string('errorEmpty'));
+					return;
+				}
+				this.showResult(SentenceGenerator.generate(input, this.language));
+			}
+
+			showError(message) {
+				elements.output.textContent = message;
+				elements.output.classList.add('error');
+				elements.outputInfo.textContent = '';
+			}
+
+			showResult(result) {
+				elements.output.textContent = result.sentence;
+				elements.output.classList.toggle('error', !result.stable);
+				elements.outputInfo.textContent = result.stable
+					? this.string('stableInfo')(result.iterations)
+					: this.string('unstableInfo')(result.iterations);
+			}
+		}
+
+		new SentenceApp();
+	</script>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a2d173811ac8ce8b',t:'MTc4NzA2MTY5Mw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script><script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496" integrity="sha512-ZE9pZaUXND66v380QUtch/5sE9tPFh2zg45pR2PB0CVkCtOREv2AJKkSidISWkysEuQ0EH8faUU5du78bx87UQ==" data-cf-beacon='{"version":"2024.11.0","token":"1954b47c125f43f8b4338b3c4f804e4f"}' crossorigin="anonymous"></script>
+</body>
+</html>
