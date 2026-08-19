@@ -2109,10 +2109,16 @@
 
 		 EXPERIMENT (2026-08-19): Tested 1..1 000 000 letter bases across all 15
 		 languages using 1 000 iterations max. Highest converged iteration
-		 observed = 8. Applied as the new probe cap. HARD_CAP remains 400
-		 (sufficient for 1 M letter inputs; max tail observed ~66). */
+		 observed = 8, so the cap is headroom, not a limit that bites: the walk
+		 stops by itself once it converges, revisits an n, or leaves the band,
+		 and at most HARD_CAP distinct n exist. Set to the full experiment
+		 budget of 1 000. A non-converging chain may now wander a few probes
+		 further before the residual scan takes over, which can nudge the
+		 reported iteration count; the sentence chosen is unchanged, since the
+		 scan still walks from the left and returns the smallest solution.
+		 HARD_CAP remains 400 (enough for 1 M letter inputs; max tail ~66). */
 		const HARD_CAP = 400;
-		const PROBE_STEPS = 8;  // highest converged iteration from 1M-scale experiment
+		const PROBE_STEPS = 1000;  // iteration cap; converges by ~8 in the 1M-scale experiment
 		const tailCache = new Map();
 
 		function tailFor(lang, n) {
