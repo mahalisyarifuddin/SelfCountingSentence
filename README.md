@@ -13,17 +13,17 @@ You type an opening clause. The generator appends a language-specific tail — a
 
 1. **Letter count**: Only Unicode letters (`\p{L}`) are counted. Spaces, punctuation, hyphens, and combining marks (for example Arabic harakat) are ignored, so *thirty-one* contributes nine letters, not ten.
 2. **Language tail**: Each language has its own number speller and its own agreement rules for the counted noun (singular/plural, gender, Arabic *tamyīz*, Russian paucal forms, and so on).
-3. **Fixed-point search**: If the opening clause has *b* letters and the tail for *n* has *t(n)* letters, a solution is any *n* where *n = b + t(n)*. The search only needs to examine a window a little wider than the longest possible tail (about 48 candidates, expanding if needed, hard-capped at 400).
-4. **Stability**: The first *n* that satisfies the identity is returned, together with how many candidates were examined. If none exists in the feasible range, the tool reports that no stable sentence could be generated.
+3. **Fixed-point search**: If the opening clause has *b* letters and the tail for *n* has *t(n)* letters, a solution is any *n* where *n = b + t(n)*. Number-word length grows slowly, so the search first probes the neighbourhood of *b*, then scans only the tight band of feasible tail lengths (typically under a dozen candidates, hard-capped at a 400-letter tail). Long pasted paragraphs are counted once; only the short tail is re-spelled.
+4. **Stability**: The smallest *n* that satisfies the identity is returned, together with how many candidates were examined. If none exists in the feasible range, the tool reports that no stable sentence could be generated.
 
-Because the opening clause never changes during the search, the input is counted once and only the winning tail is assembled into a full sentence.
+Because the opening clause never changes during the search, the input is counted once and only the winning tail is assembled into a full sentence. Number words run through the hundreds of millions, so a very long clause still gets an exact spelled count rather than a “more than nine thousand” fallback.
 
 ## Quick Start
 1. Download `SelfCountingSentence.html`.
 2. Open it in any modern browser (Chrome, Edge, Firefox, Safari).
 3. Optionally open **Settings** to choose a language and theme (Auto, Light, or Dark).
 4. Type an opening clause, or click **Example** to use the built-in phrase for the current language.
-5. Click **Generate sentence**, or press Enter.
+5. Click **Generate sentence**, or press Ctrl+Enter (⌘↩ on a Mac).
 6. Read the completed sentence and the iteration count.
 
 Verified examples of the built-in phrases:
@@ -46,6 +46,7 @@ Verified examples of the built-in phrases:
 - **RTL layout**: Arabic, Urdu, and Persian flip the whole interface, not just the result.
 - **Dark/Light Theme**: Automatic or manual theme selection.
 - **Example button**: Fills the language-specific starter phrase and generates immediately.
+- **Long input**: The opening clause is a resizable text area, so you can paste a paragraph. Number words go through the hundreds of millions.
 - **Single HTML file**: No installation, no dependencies, works completely offline.
 - **Responsive design**: Works on desktop, tablet, and mobile devices.
 
@@ -66,7 +67,7 @@ Only the tail depends on *n*, so:
 
 A solution is a fixed point of that function. Most opening clauses have one; some (for example a very short English fragment whose tail lengths skip the required total) have none, and the tool says so rather than returning a false count.
 
-Tails are memoised per language, so switching language or pressing Generate again reuses previous counts.
+The search probes a handful of candidates near *b* to learn how long tails are at that magnitude, then walks the resulting band from the left so the smallest solution wins. Tails are memoised per language, so switching language or pressing Generate again reuses previous counts.
 
 ## Supported Languages
 
