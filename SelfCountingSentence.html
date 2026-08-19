@@ -1018,6 +1018,11 @@
 						<option value="ru">Русский</option>
 						<option value="de">Deutsch</option>
 						<option value="vi">Tiếng Việt</option>
+						<option value="sw">Kiswahili</option>
+						<option value="tr">Türkçe</option>
+						<option value="tl">Tagalog</option>
+						<option value="fa">فارسی</option>
+						<option value="it">Italiano</option>
 					</select>
 				</div>
 				<div class="field">
@@ -1268,7 +1273,7 @@
 		/* ============ App logic ============
 		   Theme, language and the dialog are handled by the shared layer above.
 
-		   Ten languages. Each one contributes three things:
+		   Fifteen languages. Each one contributes three things:
 		     1. UI copy in `text` — including the seven settings keys, because the
 		        shared FALLBACK only ships en/id.
 		     2. A number speller in `words`.
@@ -1277,12 +1282,15 @@
 
 		   The counted noun is where the languages disagree, so the tail is a
 		   function rather than a fixed suffix:
-		     · es/fr/pt/ru — "letter" is feminine, so 1/2/21… inflect the numeral
-		     · de          — singular noun after any numeral ending in "ein"
-		     · ru          — буква / буквы / букв by the 1–2/4–many rule
-		     · ar          — full tamyīz: حرفان for 2, أحرف for 3–10,
-		                     حرفًا for 11–99, حرف after 100
-		     · ur          — Urdu ends the sentence with ۔, not a period
+		     · es/fr/pt/ru/it — "letter" is feminine, so 1/2/21… inflect the numeral
+		     · de             — singular noun after any numeral ending in "ein"
+		     · ru             — буква / буквы / букв by the 1–2/4–many rule
+		     · ar             — full tamyīz: حرفان for 2, أحرف for 3–10,
+		                        حرفًا for 11–99, حرف after 100
+		     · ur             — Urdu ends the sentence with ۔, not a period
+		     · tl             — Tagalog linkers (-ng, -g, na) before "titik"
+		     · sw             — Swahili noun precedes numeral: "herufi ..."
+		     · fa/tr          — singular noun after numerals: "حرف" / "harf"
 		   ===================================================================== */
 		const text = {
 			en: {
@@ -1440,10 +1448,90 @@
 				unstableInfo: n => `Không tìm thấy nghiệm ổn định. Dừng sau ${n} lần lặp.`,
 				prefTitle: 'Cài đặt', prefBtn: 'Cài đặt', langLabel: 'Ngôn ngữ',
 				themeLabel: 'Giao diện', themeAuto: 'Tự động', themeLight: 'Sáng', themeDark: 'Tối'
+			},
+			sw: {
+				title: 'Jenereta ya Sentensi za Kujirejelea',
+				subtitle: 'Hukamilisha maandishi yako kwa kishazi kinachohesabu herufi zake chenyewe kwa usahihi.',
+				labelInput: 'Maandishi ya kuingiza',
+				inputHint: 'Andika kishazi cha kuanzia; idadi na neno la “herufi” vitaongezwa katika lugha iliyochaguliwa.',
+				placeholder: 'Sentensi hii ina',
+				generate: 'Tengeneza sentensi',
+				exampleBtn: 'Mfano',
+				resultTitle: 'Matokeo',
+				errorEmpty: 'Tafadhali ingiza maandishi kwanza.',
+				unableToGenerate: '[haikuweza kuzalisha sentensi thabiti]',
+				stableInfo: n => `Imara baada ya marudio ${n}.`,
+				unstableInfo: n => `Hakuna suluhisho thabiti lililopatikana. Imeacha baada ya marudio ${n}.`,
+				prefTitle: 'Mipangilio', prefBtn: 'Mipangilio', langLabel: 'Lugha',
+				themeLabel: 'Mandhari', themeAuto: 'Otomatiki', themeLight: 'Mwanga', themeDark: 'Giza'
+			},
+			tr: {
+				title: 'Özgönderimli Cümle Oluşturucu',
+				subtitle: 'Metninizi, kendi harflerini doğru şekilde sayan bir ifadeyle tamamlar.',
+				labelInput: 'Girdi metni',
+				inputHint: 'Giriş cümlesini yazın; sayı ve “harf” kelimesi seçilen dilde eklenir.',
+				placeholder: 'Bu cümlede',
+				generate: 'Cümle oluştur',
+				exampleBtn: 'Örnek',
+				resultTitle: 'Sonuç',
+				errorEmpty: 'Lütfen önce bir metin girin.',
+				unableToGenerate: '[kararlı bir cümle oluşturulamadı]',
+				stableInfo: n => `${n} yinelemeden sonra kararlı.`,
+				unstableInfo: n => `Kararlı bir çözüm bulunamadı. ${n} yinelemeden sonra durduruldu.`,
+				prefTitle: 'Ayarlar', prefBtn: 'Ayarlar', langLabel: 'Dil',
+				themeLabel: 'Tema', themeAuto: 'Otomatik', themeLight: 'Açık', themeDark: 'Koyu'
+			},
+			tl: {
+				title: 'Tagabuo ng Pangungusap na May Sariling Bilang',
+				subtitle: 'Kinukumpleto ang iyong teksto ng pariralang wastong nagbibilang ng sarili nitong mga titik.',
+				labelInput: 'Tekstong ipapasok',
+				inputHint: 'Isulat ang panimulang sugnay; ang bilang at ang salita para sa “titik” ay idaragdag sa napiling wika.',
+				placeholder: 'Ang pangungusap na ito ay may',
+				generate: 'Bumuo ng pangungusap',
+				exampleBtn: 'Halimbawa',
+				resultTitle: 'Resulta',
+				errorEmpty: 'Mangyaring magpasok muna ng teksto.',
+				unableToGenerate: '[hindi makabuo ng matatag na pangungusap]',
+				stableInfo: n => `Matatag pagkatapos ng ${n} pag-ulit.`,
+				unstableInfo: n => `Walang nahanap na matatag na solusyon. Huminto pagkatapos ng ${n} pag-ulit.`,
+				prefTitle: 'Mga Setting', prefBtn: 'Mga Setting', langLabel: 'Wika',
+				themeLabel: 'Tema', themeAuto: 'Awtomatiko', themeLight: 'Maliwanag', themeDark: 'Madilim'
+			},
+			fa: {
+				title: 'مولد جمله خودارجاع',
+				subtitle: 'متن شما را با عبارتی تکمیل می‌کند که تعداد حروف خود را به درستی می‌شمارد.',
+				labelInput: 'متن ورودی',
+				inputHint: 'بخش آغازین جمله را بنویسید؛ تعداد و کلمه «حرف» به زبان انتخابی اضافه می‌شوند.',
+				placeholder: 'این جمله دارای',
+				generate: 'تولید جمله',
+				exampleBtn: 'مثال',
+				resultTitle: 'نتیجه',
+				errorEmpty: 'لطفاً ابتدا متنی وارد کنید.',
+				unableToGenerate: '[امکان ایجاد جمله پایدار وجود ندارد]',
+				stableInfo: n => `پس از ${n} تکرار پایدار شد.`,
+				unstableInfo: n => `هیچ راه‌حل پایداری یافت نشد. پس از ${n} تکرار متوقف شد.`,
+				prefTitle: 'تنظیمات', prefBtn: 'تنظیمات', langLabel: 'زبان',
+				themeLabel: 'طرح', themeAuto: 'خودکار', themeLight: 'روشن', themeDark: 'تاریک'
+			},
+			it: {
+				title: 'Generatore di Frasi Autoreferenziali',
+				subtitle: 'Completa il tuo testo con una frase che conta correttamente le proprie lettere.',
+				labelInput: 'Testo di input',
+				inputHint: 'Scrivi la frase iniziale; il conteggio e la parola “lettere” vengono aggiunti nella lingua selezionata.',
+				placeholder: 'Questa frase contiene',
+				generate: 'Genera frase',
+				exampleBtn: 'Esempio',
+				resultTitle: 'Risultato',
+				errorEmpty: 'Inserisci prima del testo.',
+				unableToGenerate: '[impossibile generare una frase stabile]',
+				stableInfo: n => `Stabile dopo ${n} ${n === 1 ? 'iterazione' : 'iterazioni'}.`,
+				unstableInfo: n => `Nessuna soluzione stabile trovata. Interrotto dopo ${n} iterazioni.`,
+				prefTitle: 'Impostazioni', prefBtn: 'Impostazioni', langLabel: 'Lingua',
+				themeLabel: 'Tema', themeAuto: 'Automatico', themeLight: 'Chiaro', themeDark: 'Scuro'
 			}
 		};
 
-		const RTL = ['ar', 'ur'];
+		const RTL = ['ar', 'ur', 'fa'];
 
 		/* ---------- Number spellers ----------
 		   Each returns the numeral in the form the counted noun requires. */
@@ -1618,6 +1706,102 @@
 					return r ? `${hundreds[hn]} و${words.ar(r)}` : hundreds[hn];
 				}
 				return 'أكثر من ألف';
+			},
+
+			sw(n) {
+				const u = ['sifuri', 'moja', 'mbili', 'tatu', 'nne', 'tano', 'sita', 'saba', 'nane', 'tisa', 'kumi'];
+				const t = ['', 'kumi', 'ishirini', 'thelathini', 'arobaini', 'hamsini', 'sitini', 'sabini', 'themanini', 'tisini'];
+				if (n <= 10) return u[n];
+				if (n < 20) return `kumi na ${u[n - 10]}`;
+				if (n < 100) return `${t[Math.floor(n / 10)]}${n % 10 ? ' na ' + u[n % 10] : ''}`;
+				if (n < 1000) {
+					const hn = Math.floor(n / 100), r = n % 100;
+					const h = `mia ${u[hn]}`;
+					if (!r) return h;
+					if (r < 10) return `${h} na ${u[r]}`;
+					return `${h} ${words.sw(r)}`;
+				}
+				return 'zaidi ya elfu moja';
+			},
+
+			tr(n) {
+				const u = ['sıfır', 'bir', 'iki', 'üç', 'dört', 'beş', 'altı', 'yedi', 'sekiz', 'dokuz'];
+				const t = ['', 'on', 'yirmi', 'otuz', 'kırk', 'elli', 'altmış', 'yetmiş', 'seksen', 'doksan'];
+				if (n < 10) return u[n];
+				if (n < 100) return `${t[Math.floor(n / 10)]}${n % 10 ? ' ' + u[n % 10] : ''}`;
+				if (n < 1000) {
+					const hn = Math.floor(n / 100), r = n % 100;
+					const pre = hn === 1 ? 'yüz' : `${u[hn]} yüz`;
+					return r ? `${pre} ${words.tr(r)}` : pre;
+				}
+				return 'binden fazla';
+			},
+
+			tl(n) {
+				const u = ['sero', 'isa', 'dalawa', 'tatlo', 'apat', 'lima', 'anim', 'pito', 'walo', 'siyam', 'sampu'];
+				const teens = ['', 'labing-isa', 'labindalawa', 'labintatlo', 'labing-apat', 'labinlima',
+					'labing-anim', 'labimpito', 'labingwalo', 'labinsiyam'];
+				const t = ['', 'sampu', 'dalawampu', 'tatlumpu', 'apatnapu', 'limampu',
+					'animnapu', 'pitumpu', 'walumpu', 'siyamnapu'];
+				if (n <= 10) return u[n];
+				if (n < 20) return teens[n - 10];
+				if (n < 100) {
+					const r = n % 10;
+					return r ? `${t[Math.floor(n / 10)]}'t ${u[r]}` : t[Math.floor(n / 10)];
+				}
+				if (n < 1000) {
+					const hn = Math.floor(n / 100), r = n % 100;
+					let h;
+					if (hn === 1) h = 'isang daan';
+					else if (hn === 2) h = 'dalawang daan';
+					else if (hn === 3) h = 'tatlong daan';
+					else if (hn === 4) h = 'apat na raan';
+					else if (hn === 5) h = 'limang daan';
+					else if (hn === 6) h = 'anim na raan';
+					else if (hn === 7) h = 'pitong daan';
+					else if (hn === 8) h = 'walong daan';
+					else if (hn === 9) h = 'siyam na raan';
+					if (!r) return h;
+					return `${h}'t ${words.tl(r)}`;
+				}
+				return 'higit sa isang libo';
+			},
+
+			fa(n) {
+				const u = ['صفر', 'یک', 'دو', 'سه', 'چهار', 'پنج', 'شش', 'هفت', 'هشت', 'نه',
+					'ده', 'یازده', 'دوازده', 'سیزده', 'چهارده', 'پانزده', 'شانزده', 'هفده', 'هجده', 'نوزده'];
+				const t = ['', '', 'بیست', 'سی', 'چهل', 'پنجاه', 'شصت', 'هفتاد', 'هشتاد', 'نود'];
+				const h = ['', 'صد', 'دویست', 'سیصد', 'چهارصد', 'پانصد', 'ششصد', 'هفتصد', 'هشتصد', 'نهصد'];
+				if (n < 20) return u[n];
+				if (n < 100) return `${t[Math.floor(n / 10)]}${n % 10 ? ' و ' + u[n % 10] : ''}`;
+				if (n < 1000) {
+					const hn = Math.floor(n / 100), r = n % 100;
+					return r ? `${h[hn]} و ${words.fa(r)}` : h[hn];
+				}
+				return 'بیش از هزار';
+			},
+
+			/* feminine: una, ventuno, trentuno, centouno — "lettera" is feminine */
+			it(n) {
+				const u = ['zero', 'una', 'due', 'tre', 'quattro', 'cinque', 'sei', 'sette', 'otto', 'nove', 'dieci',
+					'undici', 'dodici', 'tredici', 'quattordici', 'quindici', 'sedici', 'diciassette', 'diciotto', 'diciannove'];
+				const t = ['', '', 'venti', 'trenta', 'quaranta', 'cinquanta', 'sessanta', 'settanta', 'ottanta', 'novanta'];
+				const h = ['', 'cento', 'duecento', 'trecento', 'quattrocento', 'cinquecento', 'seicento',
+					'settecento', 'ottocento', 'novecento'];
+				if (n < 20) return u[n];
+				if (n < 100) {
+					const ten = t[Math.floor(n / 10)], r = n % 10;
+					if (r === 0) return ten;
+					if (r === 1) return `${ten.slice(0, -1)}uno`;
+					if (r === 3) return `${ten}tré`;
+					if (r === 8) return `${ten.slice(0, -1)}otto`;
+					return `${ten}${u[r]}`;
+				}
+				if (n < 1000) {
+					const hn = Math.floor(n / 100), r = n % 100;
+					return r ? `${h[hn]}${words.it(r)}` : h[hn];
+				}
+				return 'più di mille';
 			}
 		};
 
@@ -1632,6 +1816,16 @@
 			pt: n => `${words.pt(n)} ${n === 1 ? 'letra' : 'letras'}.`,
 			vi: n => `${words.vi(n)} chữ cái.`,
 			ur: n => `${words.ur(n)} ${n === 1 ? 'حرف' : 'حروف'}۔`,
+			sw: n => `herufi ${words.sw(n)}.`,
+			tr: n => `${words.tr(n)} harf.`,
+			tl(n) {
+				const w = words.tl(n);
+				if (/[aeiou]$/i.test(w)) return `${w}ng titik.`;
+				if (/n$/i.test(w)) return `${w}g titik.`;
+				return `${w} na titik.`;
+			},
+			fa: n => `${words.fa(n)} حرف.`,
+			it: n => `${words.it(n)} ${n === 1 ? 'lettera' : 'lettere'}.`,
 
 			/* singular noun after any numeral ending in "ein": ein Buchstabe,
 			   einhundertein Buchstabe — but einundzwanzig Buchstaben */
