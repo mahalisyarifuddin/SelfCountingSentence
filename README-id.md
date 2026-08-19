@@ -6,7 +6,7 @@
 ## Pengantar
 SelfCountingSentence adalah pembuat **kalimat merujuk diri** (juga disebut autogram) berbasis peramban (browser) file tunggal: kalimat yang secara benar menyatakan berapa banyak huruf yang dikandungnya. Dirancang untuk ahli bahasa, penggemar teka-teki, pelajar bahasa formal, dan siapa saja yang ingin tahu tentang rujukan diri, alat ini melengkapi klausa pembuka dengan bilangan terucap yang berlaku untuk kalimat yang sudah selesai.
 
-Antarmuka dan frasa penghitung mendukung **sepuluh bahasa**: English, Bahasa Indonesia, Español, العربية, Français, Português, اردو, Русский, Deutsch, dan Tiếng Việt.
+Antarmuka dan frasa penghitung mendukung **lima belas bahasa**: English, Bahasa Indonesia, Español, العربية, Français, Português, اردو, Русский, Deutsch, Tiếng Việt, Kiswahili, Türkçe, Tagalog, فارسی, dan Italiano.
 
 ## Cara Kerja
 Anda mengetik klausa pembuka. Generator menambahkan ekor khusus bahasa — bilangan yang dieja plus kata “huruf” dalam bentuk tata bahasa yang benar — lalu mencari bilangan *n* sedemikian rupa sehingga kalimat lengkap mengandung tepat *n* huruf.
@@ -33,12 +33,17 @@ Contoh terverifikasi dari frasa bawaan:
 - Español: *Esta oración tiene treinta y cinco letras.*
 - Français: *Cette phrase compte trente lettres.*
 - Deutsch: *Dieser Satz hat dreißig Buchstaben.*
+- Kiswahili: *Sentensi hii ina herufi thelathini.*
+- Türkçe: *Bu cümlede yirmi bir harf.*
+- Tagalog: *Ang pangungusap na ito ay may apatnapu't apat na titik.*
+- فارسی: *این جمله دارای بیست و دو حرف.*
+- Italiano: *Questa frase contiene trentasette lettere.*
 
 ## Fitur Utama
-- **Sepuluh bahasa**: Inggris, Indonesia, Spanyol, Arab, Prancis, Portugis, Urdu, Rusia, Jerman, dan Vietnam — masing-masing dengan pengeja bilangan asli.
-- **Kesesuaian tata bahasa**: Numeralia feminin dalam bahasa Spanyol, Prancis, dan Portugis; tunggal Jerman setelah numeralia yang berakhiran *ein*; Rusia *буква / буквы / букв*; *tamyīz* Arab lengkap; penutup kalimat Urdu *۔*.
+- **Lima belas bahasa**: Inggris, Indonesia, Spanyol, Arab, Prancis, Portugis, Urdu, Rusia, Jerman, Vietnam, Swahili, Turki, Tagalog, Persia, dan Italia — masing-masing dengan pengeja bilangan asli.
+- **Kesesuaian tata bahasa**: Numeralia feminin dalam bahasa Spanyol, Prancis, Italia, dan Portugis; tunggal Jerman setelah numeralia yang berakhiran *ein*; Rusia *буква / буквы / букв*; *tamyīz* Arab lengkap; penutup kalimat Urdu *۔*; perangkai ligatur Tagalog (*-ng* / *-g* / *na*); urutan nomina Swahili (*herufi ...*); nomina tunggal Turki dan Persia (*harf* / *حرف*).
 - **Penghitungan sadar Unicode**: Huruf dari aksara apa pun dihitung; tanda gabung tidak.
-- **Tata letak RTL**: Arab dan Urdu membalik seluruh antarmuka, bukan hanya hasilnya.
+- **Tata letak RTL**: Arab, Urdu, dan Persia membalik seluruh antarmuka, bukan hanya hasilnya.
 - **Tema Gelap/Terang**: Pilihan tema otomatis atau manual.
 - **Tombol Contoh**: Mengisi frasa pemula khusus bahasa dan langsung menghasilkan kalimat.
 - **File HTML tunggal**: Tidak perlu instalasi, tidak ada dependensi, bekerja sepenuhnya offline.
@@ -77,6 +82,11 @@ Ekor di-memo per bahasa, sehingga beralih bahasa atau menekan Buat lagi memakai 
 | Русский | В этом предложении | буква / буквы / букв |
 | Deutsch | Dieser Satz hat | Buchstabe / Buchstaben |
 | Tiếng Việt | Câu này có | chữ cái |
+| Kiswahili | Sentensi hii ina | herufi |
+| Türkçe | Bu cümlede | harf |
+| Tagalog | Ang pangungusap na ito ay may | titik (dengan ligatur -ng / -g / na) |
+| فارسی | این جمله دارای | حرف |
+| Italiano | Questa frase contiene | lettera / lettere (numeralia feminin) |
 
 ## Privasi & Data
 Semua perhitungan terjadi secara lokal di peramban Anda. Tidak ada data yang dikirim ke server mana pun. Alat ini sepenuhnya offline setelah dimuat.

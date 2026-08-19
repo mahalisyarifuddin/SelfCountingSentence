@@ -6,7 +6,7 @@ Self-counting sentences, simplified.
 ## Introduction
 SelfCountingSentence is a single-file, browser-based generator for **self-referential sentences** (also called autograms): sentences that correctly state how many letters they contain. Designed for linguists, puzzle enthusiasts, students of formal language, and anyone curious about self-reference, this tool completes an opening clause with a spelled-out count that is true of the finished sentence.
 
-The interface and the generated count phrase support **ten languages**: English, Bahasa Indonesia, Español, العربية, Français, Português, اردو, Русский, Deutsch, and Tiếng Việt.
+The interface and the generated count phrase support **fifteen languages**: English, Bahasa Indonesia, Español, العربية, Français, Português, اردو, Русский, Deutsch, Tiếng Việt, Kiswahili, Türkçe, Tagalog, فارسی, and Italiano.
 
 ## How It Works
 You type an opening clause. The generator appends a language-specific tail — a spelled-out number plus the grammatically correct word for “letters” — and searches for a number *n* such that the complete sentence contains exactly *n* letters.
@@ -33,12 +33,17 @@ Verified examples of the built-in phrases:
 - Español: *Esta oración tiene treinta y cinco letras.*
 - Français: *Cette phrase compte trente lettres.*
 - Deutsch: *Dieser Satz hat dreißig Buchstaben.*
+- Kiswahili: *Sentensi hii ina herufi thelathini.*
+- Türkçe: *Bu cümlede yirmi bir harf.*
+- Tagalog: *Ang pangungusap na ito ay may apatnapu't apat na titik.*
+- فارسی: *این جمله دارای بیست و دو حرف.*
+- Italiano: *Questa frase contiene trentasette lettere.*
 
 ## Key Features
-- **Ten languages**: English, Indonesian, Spanish, Arabic, French, Portuguese, Urdu, Russian, German, and Vietnamese — each with a native number speller.
-- **Grammatical agreement**: Feminine numerals in Spanish, French, and Portuguese; German singular after any numeral ending in *ein*; Russian *буква / буквы / букв*; full Arabic *tamyīz*; Urdu sentence-final *۔*.
+- **Fifteen languages**: English, Indonesian, Spanish, Arabic, French, Portuguese, Urdu, Russian, German, Vietnamese, Swahili, Turkish, Tagalog, Persian, and Italian — each with a native number speller.
+- **Grammatical agreement**: Feminine numerals in Spanish, French, Italian, and Portuguese; German singular after any numeral ending in *ein*; Russian *буква / буквы / букв*; full Arabic *tamyīz*; Urdu sentence-final *۔*; Tagalog ligature linkers (*-ng* / *-g* / *na*); Swahili noun-first ordering (*herufi ...*); Turkish and Persian singular counted nouns (*harf* / *حرف*).
 - **Unicode-aware counting**: Letters from any script count; combining marks do not.
-- **RTL layout**: Arabic and Urdu flip the whole interface, not just the result.
+- **RTL layout**: Arabic, Urdu, and Persian flip the whole interface, not just the result.
 - **Dark/Light Theme**: Automatic or manual theme selection.
 - **Example button**: Fills the language-specific starter phrase and generates immediately.
 - **Single HTML file**: No installation, no dependencies, works completely offline.
@@ -77,6 +82,11 @@ Tails are memoised per language, so switching language or pressing Generate agai
 | Русский | В этом предложении | буква / буквы / букв |
 | Deutsch | Dieser Satz hat | Buchstabe / Buchstaben |
 | Tiếng Việt | Câu này có | chữ cái |
+| Kiswahili | Sentensi hii ina | herufi |
+| Türkçe | Bu cümlede | harf |
+| Tagalog | Ang pangungusap na ito ay may | titik (with ligatures -ng / -g / na) |
+| فارسی | این جمله دارای | حرف |
+| Italiano | Questa frase contiene | lettera / lettere (feminine numerals) |
 
 ## Privacy & Data
 All calculations happen locally in your browser. No data is sent to any server. The tool is completely offline once loaded.
