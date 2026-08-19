@@ -13,10 +13,10 @@ Anda mengetik klausa pembuka. Generator menambahkan ekor khusus bahasa — bilan
 
 1. **Hitungan huruf**: Hanya huruf Unicode (`\p{L}`) yang dihitung. Spasi, tanda baca, tanda hubung, dan tanda gabung (misalnya harakat Arab) diabaikan, sehingga *thirty-one* menyumbang sembilan huruf, bukan sepuluh.
 2. **Ekor bahasa**: Setiap bahasa memiliki pengeja bilangan sendiri dan aturan kesesuaian sendiri untuk nomina yang dihitung (tunggal/jamak, gender, *tamyīz* Arab, bentuk 2–4 Rusia, dan seterusnya).
-3. **Pencarian titik tetap**: Jika klausa pembuka memiliki *b* huruf dan ekor untuk *n* memiliki *t(n)* huruf, solusi adalah setiap *n* yang memenuhi *n = b + t(n)*. Pencarian hanya perlu memeriksa jendela yang sedikit lebih lebar daripada ekor terpanjang yang mungkin (sekitar 48 kandidat, diperluas jika perlu, dibatasi keras pada 400).
-4. **Kestabilan**: *n* pertama yang memenuhi identitas dikembalikan, beserta berapa banyak kandidat yang diperiksa. Jika tidak ada di rentang yang mungkin, alat ini melaporkan bahwa kalimat stabil tidak dapat dihasilkan.
+3. **Pencarian titik tetap**: Jika klausa pembuka memiliki *b* huruf dan ekor untuk *n* memiliki *t(n)* huruf, solusi adalah setiap *n* yang memenuhi *n = b + t(n)*. Panjang kata bilangan tumbuh pelan, jadi pencarian lebih dulu menguji lingkungan *b*, lalu hanya memindai pita ketat panjang ekor yang mungkin (biasanya di bawah belasan kandidat, dibatasi keras pada ekor 400 huruf). Paragraf tempelan yang sangat panjang dihitung sekali; hanya ekor pendek yang dieja ulang.
+4. **Kestabilan**: *n* terkecil yang memenuhi identitas dikembalikan, beserta berapa banyak kandidat yang diperiksa. Jika tidak ada di rentang yang mungkin, alat ini melaporkan bahwa kalimat stabil tidak dapat dihasilkan.
 
-Karena klausa pembuka tidak berubah selama pencarian, masukan dihitung sekali dan hanya ekor pemenang yang dirakit menjadi kalimat utuh.
+Karena klausa pembuka tidak berubah selama pencarian, masukan dihitung sekali dan hanya ekor pemenang yang dirakit menjadi kalimat utuh. Kata bilangan mencakup ratusan juta, sehingga klausa yang sangat panjang tetap mendapat hitungan tepat, bukan frasa cadangan “lebih dari sembilan ribu”.
 
 ## Mulai Cepat
 1. Unduh `SelfCountingSentence.html`.
@@ -46,6 +46,7 @@ Contoh terverifikasi dari frasa bawaan:
 - **Tata letak RTL**: Arab, Urdu, dan Persia membalik seluruh antarmuka, bukan hanya hasilnya.
 - **Tema Gelap/Terang**: Pilihan tema otomatis atau manual.
 - **Tombol Contoh**: Mengisi frasa pemula khusus bahasa dan langsung menghasilkan kalimat.
+- **Masukan panjang**: Klausa pembuka berupa area teks yang dapat diubah ukurannya, jadi Anda dapat menempel paragraf. Kata bilangan mencakup ratusan juta.
 - **File HTML tunggal**: Tidak perlu instalasi, tidak ada dependensi, bekerja sepenuhnya offline.
 - **Desain responsif**: Bekerja dengan baik di desktop, tablet, dan perangkat seluler.
 
@@ -66,7 +67,7 @@ Hanya ekor yang bergantung pada *n*, sehingga:
 
 Solusi adalah titik tetap dari fungsi tersebut. Sebagian besar klausa pembuka memiliki satu solusi; beberapa (misalnya fragmen Inggris yang sangat pendek yang panjang ekornya melewati total yang diperlukan) tidak memiliki solusi, dan alat ini mengatakannya daripada mengembalikan hitungan yang salah.
 
-Ekor di-memo per bahasa, sehingga beralih bahasa atau menekan Buat lagi memakai ulang hitungan sebelumnya.
+Pencarian menguji beberapa kandidat di dekat *b* untuk mengetahui panjang ekor pada magnitudo itu, lalu menelusuri pita hasilnya dari kiri agar solusi terkecil yang menang. Ekor di-memo per bahasa, sehingga beralih bahasa atau menekan Buat lagi memakai ulang hitungan sebelumnya.
 
 ## Bahasa yang Didukung
 

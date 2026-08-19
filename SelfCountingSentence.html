@@ -943,6 +943,20 @@
 		#outputInfo:empty {
 			display: none;
 		}
+
+		#input {
+			min-height: 6.5rem;
+			max-height: 24rem;
+			resize: vertical;
+			line-height: 1.5;
+			field-sizing: content;
+		}
+
+		#output {
+			overflow-wrap: anywhere;
+			max-height: 28rem;
+			overflow: auto;
+		}
 	</style>
 </head>
 
@@ -970,7 +984,7 @@
 		<section class="card">
 			<div class="field">
 				<label id="labelInput" for="input">Input text</label>
-				<input type="text" id="input" autocomplete="off" spellcheck="false">
+				<textarea id="input" rows="4" autocomplete="off" spellcheck="false"></textarea>
 				<p class="hint" id="inputHint">Write the opening clause; the count and the word for
 					“letters” are appended in the selected language.</p>
 			</div>
@@ -1534,7 +1548,16 @@
 		const RTL = ['ar', 'ur', 'fa'];
 
 		/* ---------- Number spellers ----------
-		   Each returns the numeral in the form the counted noun requires. */
+		   Each returns the numeral in the form the counted noun requires.
+		   Scales go through hundreds of millions so a long pasted paragraph
+		   still gets an exact count instead of “more than nine thousand”. */
+		const ruAgree = (n, one, few, many) => {
+			const m10 = n % 10, m100 = n % 100;
+			if (m10 === 1 && m100 !== 11) return one;
+			if (m10 >= 2 && m10 <= 4 && !(m100 >= 12 && m100 <= 14)) return few;
+			return many;
+		};
+
 		const words = {
 			id(n) {
 				const u = ['nol', 'satu', 'dua', 'tiga', 'empat', 'lima', 'enam', 'tujuh', 'delapan', 'sembilan', 'sepuluh', 'sebelas'];
@@ -1543,10 +1566,15 @@
 				if (n < 100) return `${u[Math.floor(n / 10)]} puluh${n % 10 ? ' ' + u[n % 10] : ''}`;
 				if (n < 200) return `seratus${n > 100 ? ' ' + words.id(n % 100) : ''}`;
 				if (n < 1000) return `${u[Math.floor(n / 100)]} ratus${n % 100 ? ' ' + words.id(n % 100) : ''}`;
-				if (n < 2000) return `seribu${n > 1000 ? ' ' + words.id(n % 1000) : ''}`;
-				if (n < 10000) return `${u[Math.floor(n / 1000)]} ribu${n % 1000 ? ' ' + words.id(n % 1000) : ''}`;
-				return 'lebih dari sembilan ribu';
-			},
+			if (n < 2000) return `seribu${n > 1000 ? ' ' + words.id(n % 1000) : ''}`;
+			if (n < 1000000) return `${words.id(Math.floor(n / 1000))} ribu${n % 1000 ? ' ' + words.id(n % 1000) : ''}`;
+			if (n < 1000000000) {
+				const m = Math.floor(n / 1000000), r = n % 1000000;
+				const pre = m === 1 ? 'satu juta' : `${words.id(m)} juta`;
+				return r ? `${pre} ${words.id(r)}` : pre;
+			}
+			return 'lebih dari sembilan ratus sembilan puluh sembilan juta';
+		},
 
 			en(n) {
 				const u = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten',
@@ -1554,10 +1582,11 @@
 				const t = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
 				if (n < 20) return u[n];
 				if (n < 100) return `${t[Math.floor(n / 10)]}${n % 10 ? '-' + u[n % 10] : ''}`;
-				if (n < 1000) return `${u[Math.floor(n / 100)]} hundred${n % 100 ? ' ' + words.en(n % 100) : ''}`;
-				if (n < 10000) return `${words.en(Math.floor(n / 1000))} thousand${n % 1000 ? ' ' + words.en(n % 1000) : ''}`;
-				return 'more than nine thousand';
-			},
+			if (n < 1000) return `${u[Math.floor(n / 100)]} hundred${n % 100 ? ' ' + words.en(n % 100) : ''}`;
+			if (n < 1000000) return `${words.en(Math.floor(n / 1000))} thousand${n % 1000 ? ' ' + words.en(n % 1000) : ''}`;
+			if (n < 1000000000) return `${words.en(Math.floor(n / 1000000))} million${n % 1000000 ? ' ' + words.en(n % 1000000) : ''}`;
+			return 'more than nine hundred ninety-nine million';
+		},
 
 			/* feminine: una, veintiuna, doscientas — "letra" is feminine */
 			es(n) {
@@ -1570,12 +1599,17 @@
 					'setecientas', 'ochocientas', 'novecientas'];
 				if (n < 30) return u[n];
 				if (n < 100) return `${t[Math.floor(n / 10)]}${n % 10 ? ' y ' + u[n % 10] : ''}`;
-				if (n === 100) return 'cien';
-				if (n < 1000) return `${h[Math.floor(n / 100)]}${n % 100 ? ' ' + words.es(n % 100) : ''}`;
-				if (n < 2000) return `mil${n % 1000 ? ' ' + words.es(n % 1000) : ''}`;
-				if (n < 10000) return `${words.es(Math.floor(n / 1000))} mil${n % 1000 ? ' ' + words.es(n % 1000) : ''}`;
-				return 'más de nueve mil';
-			},
+			if (n === 100) return 'cien';
+			if (n < 1000) return `${h[Math.floor(n / 100)]}${n % 100 ? ' ' + words.es(n % 100) : ''}`;
+			if (n < 2000) return `mil${n % 1000 ? ' ' + words.es(n % 1000) : ''}`;
+			if (n < 1000000) return `${words.es(Math.floor(n / 1000))} mil${n % 1000 ? ' ' + words.es(n % 1000) : ''}`;
+			if (n < 1000000000) {
+				const m = Math.floor(n / 1000000), r = n % 1000000;
+				const pre = m === 1 ? 'un millón' : `${words.es(m)} millones`;
+				return r ? `${pre} ${words.es(r)}` : pre;
+			}
+			return 'más de novecientas noventa y nueve millones';
+		},
 
 			/* feminine: une, vingt et une, quatre-vingt-une — "lettre" is feminine */
 			fr(n) {
@@ -1604,12 +1638,18 @@
 					return r ? `${pre} ${words.fr(r)}` : pre;
 				}
 				if (n < 2000) return `mille${n % 1000 ? ' ' + words.fr(n % 1000) : ''}`;
-				if (n < 10000) {
+				if (n < 1000000) {
 					let tn = words.fr(Math.floor(n / 1000));
 					if (tn.endsWith('une')) tn = tn.slice(0, -1);
 					return `${tn} mille${n % 1000 ? ' ' + words.fr(n % 1000) : ''}`;
 				}
-				return 'plus de neuf mille';
+				if (n < 1000000000) {
+					const m = Math.floor(n / 1000000), r = n % 1000000;
+					let mw = m === 1 ? 'un million' : `${words.fr(m)} millions`;
+					if (mw.endsWith('une millions')) mw = mw.slice(0, -'une millions'.length) + 'un millions';
+					return r ? `${mw} ${words.fr(r)}` : mw;
+				}
+				return 'plus de neuf cent quatre-vingt-dix-neuf millions';
 			},
 
 			/* feminine: uma, duas, vinte e uma, duzentas — "letra" is feminine */
@@ -1622,16 +1662,24 @@
 					'setecentas', 'oitocentas', 'novecentas'];
 				if (n < 20) return u[n];
 				if (n < 100) return `${t[Math.floor(n / 10)]}${n % 10 ? ' e ' + u[n % 10] : ''}`;
-				if (n === 100) return 'cem';
-				if (n < 1000) return `${h[Math.floor(n / 100)]}${n % 100 ? ' e ' + words.pt(n % 100) : ''}`;
-				if (n < 2000) return `mil${n % 1000 ? ' e ' + words.pt(n % 1000) : ''}`;
-				if (n < 10000) {
-					const r = n % 1000;
-					const sep = (r > 0 && r < 100) || (r % 100 === 0) ? ' e ' : ' ';
-					return `${m_u[Math.floor(n / 1000)]} mil${r ? sep + words.pt(r) : ''}`;
-				}
-				return 'mais de nove mil';
-			},
+			if (n === 100) return 'cem';
+			if (n < 1000) return `${h[Math.floor(n / 100)]}${n % 100 ? ' e ' + words.pt(n % 100) : ''}`;
+			if (n < 2000) return `mil${n % 1000 ? ' e ' + words.pt(n % 1000) : ''}`;
+			if (n < 1000000) {
+				const tn = Math.floor(n / 1000), r = n % 1000;
+				const head = tn < 10 ? m_u[tn] : words.pt(tn).replace(/uma\b/g, 'um').replace(/duas\b/g, 'dois');
+				const sep = (r > 0 && r < 100) || (r > 0 && r % 100 === 0) ? ' e ' : ' ';
+				return `${head} mil${r ? sep + words.pt(r) : ''}`;
+			}
+			if (n < 1000000000) {
+				const m = Math.floor(n / 1000000), r = n % 1000000;
+				const mw = m === 1 ? 'um milhão' : `${(m < 10 ? m_u[m] : words.pt(m).replace(/uma\b/g, 'um').replace(/duas\b/g, 'dois'))} milhões`;
+				if (!r) return mw;
+				const sep = r < 100 || r % 100 === 0 ? ' e ' : ' ';
+				return `${mw}${sep}${words.pt(r)}`;
+			}
+			return 'mais de novecentos noventa e nove milhões';
+		},
 
 			/* one word, units first: einundzwanzig, einhundertvier */
 			de(n) {
@@ -1643,16 +1691,22 @@
 					const r = n % 10;
 					return r === 0 ? t[Math.floor(n / 10)] : `${u[r]}und${t[Math.floor(n / 10)]}`;
 				}
-				if (n < 1000) {
-					const hn = Math.floor(n / 100), r = n % 100;
-					return `${u[hn]}hundert${r ? words.de(r) : ''}`;
-				}
-				if (n < 10000) {
-					const tn = Math.floor(n / 1000), r = n % 1000;
-					return `${u[tn]}tausend${r ? words.de(r) : ''}`;
-				}
-				return 'mehr als neuntausend';
-			},
+			if (n < 1000) {
+				const hn = Math.floor(n / 100), r = n % 100;
+				return `${u[hn]}hundert${r ? words.de(r) : ''}`;
+			}
+			if (n < 1000000) {
+				const tn = Math.floor(n / 1000), r = n % 1000;
+				const head = tn < 20 ? u[tn] : words.de(tn);
+				return `${head}tausend${r ? words.de(r) : ''}`;
+			}
+			if (n < 1000000000) {
+				const m = Math.floor(n / 1000000), r = n % 1000000;
+				const head = m === 1 ? 'eine Million' : `${words.de(m)} Millionen`;
+				return r ? `${head} ${words.de(r)}` : head;
+			}
+			return 'mehr als neunhundertneunundneunzig Millionen';
+		},
 
 			/* feminine: одна, две — "буква" is feminine */
 			ru(n) {
@@ -1664,12 +1718,18 @@
 				if (n < 20) return u[n];
 				if (n < 100) return `${t[Math.floor(n / 10)]}${n % 10 ? ' ' + u[n % 10] : ''}`;
 				if (n < 1000) return `${h[Math.floor(n / 100)]}${n % 100 ? ' ' + words.ru(n % 100) : ''}`;
-				if (n < 10000) {
+				if (n < 1000000) {
 					const tn = Math.floor(n / 1000), r = n % 1000;
-					const t_word = tn === 1 ? 'одна тысяча' : (tn >= 2 && tn <= 4 ? u[tn] + ' тысячи' : u[tn] + ' тысяч');
-					return `${t_word}${r ? ' ' + words.ru(r) : ''}`;
+					const form = ruAgree(tn, 'тысяча', 'тысячи', 'тысяч');
+					return `${words.ru(tn)} ${form}${r ? ' ' + words.ru(r) : ''}`;
 				}
-				return 'больше девяти тысяч';
+				if (n < 1000000000) {
+					const m = Math.floor(n / 1000000), r = n % 1000000;
+					const form = ruAgree(m, 'миллион', 'миллиона', 'миллионов');
+					const head = words.ru(m).replace(/(^| )одна$/, '$1один').replace(/(^| )две$/, '$1два');
+					return `${head} ${form}${r ? ' ' + words.ru(r) : ''}`;
+				}
+				return 'больше девятисот девяноста девяти миллионов';
 			},
 
 			/* 1–100 are all irregular in Urdu, so they are listed */
@@ -1684,19 +1744,29 @@
 					'اکہتر', 'بہتر', 'تہتر', 'چوہتر', 'پچہتر', 'چھہتر', 'ستتر', 'اٹھہتر', 'اناسی', 'اسی',
 					'اکیاسی', 'بیاسی', 'تراسی', 'چوراسی', 'پچاسی', 'چھیاسی', 'ستاسی', 'اٹھاسی', 'نواسی', 'نوے',
 					'اکانوے', 'بانوے', 'ترانوے', 'چورانوے', 'پچانوے', 'چھیانوے', 'ستانوے', 'اٹھانوے', 'ننانوے', 'سو'];
-				if (n <= 100) return w[n];
-				if (n < 1000) {
-					const hn = Math.floor(n / 100), r = n % 100;
-					const h = hn === 1 ? 'ایک سو' : `${w[hn]} سو`;
-					return `${h}${r ? ' ' + words.ur(r) : ''}`;
-				}
-				if (n < 10000) {
-					const tn = Math.floor(n / 1000), r = n % 1000;
-					const t = tn === 1 ? 'ایک ہزار' : `${w[tn]} ہزار`;
-					return `${t}${r ? ' ' + words.ur(r) : ''}`;
-				}
-				return 'نو ہزار سے زیادہ';
-			},
+			if (n <= 100) return w[n];
+			if (n < 1000) {
+				const hn = Math.floor(n / 100), r = n % 100;
+				const h = hn === 1 ? 'ایک سو' : `${w[hn]} سو`;
+				return `${h}${r ? ' ' + words.ur(r) : ''}`;
+			}
+			if (n < 100000) {
+				const tn = Math.floor(n / 1000), r = n % 1000;
+				const t = tn === 1 ? 'ایک ہزار' : `${words.ur(tn)} ہزار`;
+				return `${t}${r ? ' ' + words.ur(r) : ''}`;
+			}
+			if (n < 10000000) {
+				const ln = Math.floor(n / 100000), r = n % 100000;
+				const t = ln === 1 ? 'ایک لاکھ' : `${words.ur(ln)} لاکھ`;
+				return `${t}${r ? ' ' + words.ur(r) : ''}`;
+			}
+			if (n < 1000000000) {
+				const cn = Math.floor(n / 10000000), r = n % 10000000;
+				const t = cn === 1 ? 'ایک کروڑ' : `${words.ur(cn)} کروڑ`;
+				return `${t}${r ? ' ' + words.ur(r) : ''}`;
+			}
+			return 'ایک ارب سے زیادہ';
+		},
 
 			/* mốt / lăm / tư after mươi */
 			vi(n) {
@@ -1717,14 +1787,24 @@
 					if (r < 10) return `${u[hn]} trăm linh ${u[r]}`;
 					return `${u[hn]} trăm ${words.vi(r)}`;
 				}
-				if (n < 10000) {
+				if (n < 1000000) {
 					const tn = Math.floor(n / 1000), r = n % 1000;
-					if (r === 0) return `${u[tn]} nghìn`;
-					if (r < 10) return `${u[tn]} nghìn không trăm linh ${u[r]}`;
-					if (r < 100) return `${u[tn]} nghìn không trăm ${words.vi(r)}`;
-					return `${u[tn]} nghìn ${words.vi(r)}`;
+					const head = `${words.vi(tn)} nghìn`;
+					if (r === 0) return head;
+					if (r < 10) return `${head} không trăm linh ${u[r]}`;
+					if (r < 100) return `${head} không trăm ${words.vi(r)}`;
+					return `${head} ${words.vi(r)}`;
 				}
-				return 'hơn chín nghìn';
+				if (n < 1000000000) {
+					const m = Math.floor(n / 1000000), r = n % 1000000;
+					const head = `${words.vi(m)} triệu`;
+					if (r === 0) return head;
+					if (r < 10) return `${head} không nghìn không trăm linh ${u[r]}`;
+					if (r < 100) return `${head} không nghìn không trăm ${words.vi(r)}`;
+					if (r < 1000) return `${head} không nghìn ${words.vi(r)}`;
+					return `${head} ${words.vi(r)}`;
+				}
+				return 'hơn chín trăm chín mươi chín triệu';
 			},
 
 			/* masculine noun حرف, so 3–10 take the ة form */
@@ -1745,14 +1825,38 @@
 					const hn = Math.floor(n / 100), r = n % 100;
 					return r ? `${hundreds[hn]} و${words.ar(r)}` : hundreds[hn];
 				}
-				if (n < 2000) return `ألف${n % 1000 ? ' و' + words.ar(n % 1000) : ''}`;
-				if (n < 3000) return `ألفان${n % 1000 ? ' و' + words.ar(n % 1000) : ''}`;
-				if (n < 10000) {
-					const tn = Math.floor(n / 1000), r = n % 1000;
-					return `${ones[tn]} آلاف${r ? ' و' + words.ar(r) : ''}`;
+			if (n < 2000) return `ألف${n % 1000 ? ' و' + words.ar(n % 1000) : ''}`;
+			if (n < 3000) return `ألفان${n % 1000 ? ' و' + words.ar(n % 1000) : ''}`;
+			if (n < 1000000) {
+				const tn = Math.floor(n / 1000), r = n % 1000;
+				let head;
+				if (tn === 1) head = 'ألف';
+				else if (tn === 2) head = 'ألفان';
+				else if (tn <= 10) head = `${tn === 10 ? 'عشرة' : ones[tn]} آلاف`;
+				else {
+					const rem = tn % 100;
+					if (rem === 0 || rem === 1 || rem === 2) head = `${words.ar(tn)} ألف`;
+					else if (rem <= 10) head = `${words.ar(tn)} آلاف`;
+					else head = `${words.ar(tn)} ألفًا`;
 				}
-				return 'أكثر من تسعة آلاف';
-			},
+				return r ? `${head} و${words.ar(r)}` : head;
+			}
+			if (n < 1000000000) {
+				const m = Math.floor(n / 1000000), r = n % 1000000;
+				let head;
+				if (m === 1) head = 'مليون';
+				else if (m === 2) head = 'مليونان';
+				else if (m <= 10) head = `${words.ar(m)} ملايين`;
+				else {
+					const rem = m % 100;
+					if (rem === 0 || rem === 1 || rem === 2) head = `${words.ar(m)} مليون`;
+					else if (rem <= 10) head = `${words.ar(m)} ملايين`;
+					else head = `${words.ar(m)} مليونًا`;
+				}
+				return r ? `${head} و${words.ar(r)}` : head;
+			}
+			return 'أكثر من تسعمائة تسعة وتسعين مليونًا';
+		},
 
 			sw(n) {
 				const u = ['sifuri', 'moja', 'mbili', 'tatu', 'nne', 'tano', 'sita', 'saba', 'nane', 'tisa', 'kumi'];
@@ -1767,15 +1871,21 @@
 					if (r < 10) return `${h} na ${u[r]}`;
 					return `${h} ${words.sw(r)}`;
 				}
-				if (n < 10000) {
+				if (n < 1000000) {
 					const tn = Math.floor(n / 1000), r = n % 1000;
-					const th = `elfu ${u[tn]}`;
+					const th = `elfu ${words.sw(tn)}`;
 					if (!r) return th;
-					if (r < 10) return `${th} na ${u[r]}`;
 					if (r < 100) return `${th} na ${words.sw(r)}`;
 					return `${th} ${words.sw(r)}`;
 				}
-				return 'zaidi ya elfu tisa';
+				if (n < 1000000000) {
+					const m = Math.floor(n / 1000000), r = n % 1000000;
+					const th = `milioni ${words.sw(m)}`;
+					if (!r) return th;
+					if (r < 100) return `${th} na ${words.sw(r)}`;
+					return `${th} ${words.sw(r)}`;
+				}
+				return 'zaidi ya milioni mia tisa tisini na tisa';
 			},
 
 			tr(n) {
@@ -1783,18 +1893,23 @@
 				const t = ['', 'on', 'yirmi', 'otuz', 'kırk', 'elli', 'altmış', 'yetmiş', 'seksen', 'doksan'];
 				if (n < 10) return u[n];
 				if (n < 100) return `${t[Math.floor(n / 10)]}${n % 10 ? ' ' + u[n % 10] : ''}`;
-				if (n < 1000) {
-					const hn = Math.floor(n / 100), r = n % 100;
-					const pre = hn === 1 ? 'yüz' : `${u[hn]} yüz`;
-					return r ? `${pre} ${words.tr(r)}` : pre;
-				}
-				if (n < 10000) {
-					const tn = Math.floor(n / 1000), r = n % 1000;
-					const pre = tn === 1 ? 'bin' : `${u[tn]} bin`;
-					return r ? `${pre} ${words.tr(r)}` : pre;
-				}
-				return 'dokuz binden fazla';
-			},
+			if (n < 1000) {
+				const hn = Math.floor(n / 100), r = n % 100;
+				const pre = hn === 1 ? 'yüz' : `${u[hn]} yüz`;
+				return r ? `${pre} ${words.tr(r)}` : pre;
+			}
+			if (n < 1000000) {
+				const tn = Math.floor(n / 1000), r = n % 1000;
+				const pre = tn === 1 ? 'bin' : `${words.tr(tn)} bin`;
+				return r ? `${pre} ${words.tr(r)}` : pre;
+			}
+			if (n < 1000000000) {
+				const m = Math.floor(n / 1000000), r = n % 1000000;
+				const pre = m === 1 ? 'bir milyon' : `${words.tr(m)} milyon`;
+				return r ? `${pre} ${words.tr(r)}` : pre;
+			}
+			return 'dokuz yüz doksan dokuz milyondan fazla';
+		},
 
 			tl(n) {
 				const u = ['sero', 'isa', 'dalawa', 'tatlo', 'apat', 'lima', 'anim', 'pito', 'walo', 'siyam', 'sampu'];
@@ -1823,16 +1938,24 @@
 					if (!r) return h;
 					return `${h}'t ${words.tl(r)}`;
 				}
-				if (n < 10000) {
-					const tn = Math.floor(n / 1000), r = n % 1000;
-					const w = words.tl(tn);
-					const link = /[aeiou]$/i.test(w) ? 'ng' : (/n$/i.test(w) ? 'g' : ' na');
-					const th = `${w}${link} libo`;
-					if (!r) return th;
-					return `${th} at ${words.tl(r)}`;
-				}
-				return 'higit sa siyam na libo';
-			},
+			if (n < 1000000) {
+				const tn = Math.floor(n / 1000), r = n % 1000;
+				const w = words.tl(tn);
+				const link = /[aeiou]$/i.test(w) ? 'ng' : (/n$/i.test(w) ? 'g' : ' na');
+				const th = `${w}${link} libo`;
+				if (!r) return th;
+				return `${th} at ${words.tl(r)}`;
+			}
+			if (n < 1000000000) {
+				const m = Math.floor(n / 1000000), r = n % 1000000;
+				const w = words.tl(m);
+				const link = /[aeiou]$/i.test(w) ? 'ng' : (/n$/i.test(w) ? 'g' : ' na');
+				const th = `${w}${link} milyon`;
+				if (!r) return th;
+				return `${th} at ${words.tl(r)}`;
+			}
+			return "higit sa siyam na raan at siyamnapu't siyam na milyon";
+		},
 
 			fa(n) {
 				const u = ['صفر', 'یک', 'دو', 'سه', 'چهار', 'پنج', 'شش', 'هفت', 'هشت', 'نه',
@@ -1845,12 +1968,17 @@
 					const hn = Math.floor(n / 100), r = n % 100;
 					return r ? `${h[hn]} و ${words.fa(r)}` : h[hn];
 				}
-				if (n < 10000) {
+				if (n < 1000000) {
 					const tn = Math.floor(n / 1000), r = n % 1000;
-					const th = ['', 'هزار', 'دو هزار', 'سه هزار', 'چهار هزار', 'پنج هزار', 'شش هزار', 'هفت هزار', 'هشت هزار', 'نه هزار'];
-					return r ? `${th[tn]} و ${words.fa(r)}` : th[tn];
+					const th = tn === 1 ? 'هزار' : `${words.fa(tn)} هزار`;
+					return r ? `${th} و ${words.fa(r)}` : th;
 				}
-				return 'بیش از نه هزار';
+				if (n < 1000000000) {
+					const m = Math.floor(n / 1000000), r = n % 1000000;
+					const th = m === 1 ? 'یک میلیون' : `${words.fa(m)} میلیون`;
+					return r ? `${th} و ${words.fa(r)}` : th;
+				}
+				return 'بیش از نهصد و نود و نه میلیون';
 			},
 
 			/* feminine: una, ventuno, trentuno, centouno — "lettera" is feminine */
@@ -1873,13 +2001,22 @@
 					const hn = Math.floor(n / 100), r = n % 100;
 					return r ? `${h[hn]}${words.it(r)}` : h[hn];
 				}
-				if (n < 2000) return `mille${n % 1000 ? words.it(n % 1000) : ''}`;
-				if (n < 10000) {
-					const tn = Math.floor(n / 1000), r = n % 1000;
-					return `${u[tn]}mila${r ? words.it(r) : ''}`;
-				}
-				return 'più di novemila';
+			if (n < 2000) return `mille${n % 1000 ? words.it(n % 1000) : ''}`;
+			if (n < 1000000) {
+				const tn = Math.floor(n / 1000), r = n % 1000;
+				let w = tn < 20 ? u[tn] : words.it(tn);
+				if (w.endsWith('una')) w = w.slice(0, -3) + 'uno';
+				return `${w}mila${r ? words.it(r) : ''}`;
 			}
+			if (n < 1000000000) {
+				const m = Math.floor(n / 1000000), r = n % 1000000;
+				let w = m === 1 ? 'un' : words.it(m);
+				if (w.endsWith('una')) w = w.slice(0, -1);
+				const head = m === 1 ? 'un milione' : `${w} milioni`;
+				return r ? `${head} ${words.it(r)}` : head;
+			}
+			return 'più di novecentonovantanove milioni';
+		}
 		};
 
 		/* ---------- The counted tail ----------
@@ -1938,12 +2075,12 @@
 		const elements = new Proxy({}, { get: (_, id) => document.getElementById(id) });
 
 		/* Unicode-aware: Arabic, Cyrillic, Vietnamese diacritics and ß all count
-		   as letters; combining marks (Arabic harakat) do not. */
-		const LETTER = /\p{L}/gu;
+		   as letters; combining marks (Arabic harakat) do not. A fresh regex
+		   per call keeps lastIndex from leaking across long pasted inputs. */
 		const countLetters = value => {
 			let count = 0;
-			LETTER.lastIndex = 0;
-			while (LETTER.test(value)) count++;
+			const re = /\p{L}/gu;
+			while (re.test(value)) count++;
 			return count;
 		};
 
@@ -1953,25 +2090,22 @@
 
 		       letters(sentence) = base + letters(tail(n)),   base = letters(input)
 
-		   Two things fall out of that identity, and both are pure profit:
+		   A candidate is judged from its tail alone — the (possibly very long)
+		   opening clause is counted once. n can only sit within one tail-length
+		   of base, and tail length grows slowly, so the map
 
-		   1. A candidate can be judged from its tail alone. No rebuilding the
-		      sentence, no re-scanning the input — which is the long part of the
-		      string and was being re-counted on every single candidate.
-		   2. A solution satisfies n - base === letters(tail(n)), so n can only
-		      sit within one tail-length of base. The widest tail any of the ten
-		      languages produces is 39 letters, so WINDOW candidates cover the
-		      entire feasible range; the old loop walked 400, of which ~90% were
-		      arithmetically impossible.
+		       f(n) = base + letters(tail(n))
 
-		   The window still grows itself if some language ever yields a longer
-		   tail, so the search stays exhaustive rather than merely lucky: when it
-		   reports "no stable solution", every candidate that could have worked
-		   has been checked.
+		   is piecewise nearly constant. A few probes around the current
+		   magnitude learn tMin/tMax; the residual scan then walks only
+		   [base + tMin, base + tMax] from the left, so the smallest solution
+		   wins even on a clause with hundreds of thousands of letters.
+
+		   The band expands if a longer (or shorter) tail appears. HARD_CAP is
+		   the widest tail we will honour.
 
 		   Tails are memoised per language, so re-running — switching language,
-		   pressing Enter again, hitting Example — reuses the counts. */
-		const WINDOW = 48;
+		   generating again, hitting Example — reuses the counts. */
 		const HARD_CAP = 400;
 		const tailCache = new Map();
 
@@ -1989,21 +2123,53 @@
 		const SentenceGenerator = {
 			generate(input, lang) {
 				const base = countLetters(input);
-				const hardLimit = base + HARD_CAP;
-				let limit = base + WINDOW;
+				const hardHi = base + HARD_CAP;
+				const tried = new Map();
 				let examined = 0;
+				let tMin = Infinity, tMax = 0;
 
-				for (let n = base + 1; n <= limit; n++) {
-					const entry = tailFor(lang, n);
-					examined++;
-					if (base + entry.letters === n) {
-						// Only the winner is ever assembled into a full sentence.
+				const evalN = n => {
+					let entry = tried.get(n);
+					if (!entry) {
+						entry = tailFor(lang, n);
+						tried.set(n, entry);
+						examined++;
+						if (entry.letters < tMin) tMin = entry.letters;
+						if (entry.letters > tMax) tMax = entry.letters;
+					}
+					return entry;
+				};
+
+				// Probe the neighbourhood so tMin/tMax sit near this magnitude.
+				// Do not return from a probe: a later, smaller n may also work,
+				// and the documented examples always use the smallest solution.
+				const sampleAt = Math.max(base, 1);
+				evalN(sampleAt);
+				let n = base + tried.get(sampleAt).letters;
+				for (let step = 0; step < 8; step++) {
+					if (n < 1 || n > hardHi) break;
+					evalN(n);
+					const next = base + tried.get(n).letters;
+					if (next === n || tried.has(next)) break;
+					n = next;
+				}
+
+				if (!Number.isFinite(tMin)) { tMin = 1; tMax = 48; }
+				let lo = Math.max(1, base + Math.max(1, tMin - 4));
+				let hi = Math.min(hardHi, base + tMax + 4);
+
+				for (let k = lo; k <= hi; k++) {
+					const entry = evalN(k);
+					if (base + entry.letters === k) {
 						return { sentence: `${input} ${entry.value}`, stable: true, iterations: examined };
 					}
-					// A tail longer than the window assumed means the feasible range
-					// reaches further than we thought; widen it instead of missing it.
 					const reach = base + entry.letters;
-					if (reach > limit && limit < hardLimit) limit = Math.min(reach, hardLimit);
+					if (reach > hi && hi < hardHi) hi = Math.min(reach + 4, hardHi);
+					if (reach < lo && reach >= 1) {
+						hi = Math.max(hi, k);
+						lo = reach;
+						k = lo - 1;
+					}
 				}
 
 				return {
@@ -2024,8 +2190,11 @@
 
 			setup() {
 				elements.language.addEventListener('change', e => this.lang(e.target.value));
-				elements.input.addEventListener('keyup', e => {
-					if (e.key === 'Enter') this.generateSentence();
+				elements.input.addEventListener('keydown', e => {
+					if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+						e.preventDefault();
+						this.generateSentence();
+					}
 				});
 				elements.generate.addEventListener('click', () => this.generateSentence());
 				elements.exampleBtn.addEventListener('click', () => {
@@ -2084,6 +2253,5 @@
 
 		new SentenceApp();
 	</script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a2d173811ac8ce8b',t:'MTc4NzA2MTY5Mw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script><script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496" integrity="sha512-ZE9pZaUXND66v380QUtch/5sE9tPFh2zg45pR2PB0CVkCtOREv2AJKkSidISWkysEuQ0EH8faUU5du78bx87UQ==" data-cf-beacon='{"version":"2024.11.0","token":"1954b47c125f43f8b4338b3c4f804e4f"}' crossorigin="anonymous"></script>
 </body>
 </html>
