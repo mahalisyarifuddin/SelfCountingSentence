@@ -6,7 +6,7 @@
 ## Pengantar
 SelfCountingSentence adalah pembuat **kalimat merujuk diri** (juga disebut autogram) berbasis peramban (browser) file tunggal: kalimat yang secara benar menyatakan berapa banyak huruf yang dikandungnya. Dirancang untuk ahli bahasa, penggemar teka-teki, pelajar bahasa formal, dan siapa saja yang ingin tahu tentang rujukan diri, alat ini melengkapi klausa pembuka dengan bilangan terucap yang berlaku untuk kalimat yang sudah selesai.
 
-Antarmuka dan frasa penghitung mendukung **lima belas bahasa**: English, Bahasa Indonesia, Español, العربية, Français, Português, اردو, Русский, Deutsch, Tiếng Việt, Kiswahili, Türkçe, Tagalog, فارسی, dan Italiano.
+Antarmuka dan frasa penghitung mendukung **lima belas bahasa**: Bahasa Indonesia, Deutsch, English, Español, Français, Italiano, Kiswahili, Português, Tagalog, Tiếng Việt, Türkçe, Русский, اردو, العربية, dan فارسی.
 
 ## Cara Kerja
 Anda mengetik klausa pembuka. Generator menambahkan ekor khusus bahasa — bilangan yang dieja plus kata “huruf” dalam bentuk tata bahasa yang benar — lalu mencari bilangan *n* sedemikian rupa sehingga kalimat lengkap mengandung tepat *n* huruf.
@@ -28,22 +28,22 @@ Karena klausa pembuka tidak berubah selama pencarian, masukan dihitung sekali da
 
 Contoh terverifikasi dari frasa bawaan:
 
-- English: *This sentence has thirty-one letters.*
 - Bahasa Indonesia: *Kalimat ini memiliki tiga puluh enam huruf.*
+- Deutsch: *Dieser Satz hat dreißig Buchstaben.*
+- English: *This sentence has thirty-one letters.*
 - Español: *Esta oración tiene treinta y cinco letras.*
 - Français: *Cette phrase compte trente lettres.*
-- Deutsch: *Dieser Satz hat dreißig Buchstaben.*
-- Kiswahili: *Sentensi hii ina herufi thelathini.*
-- Türkçe: *Bu cümlede yirmi bir harf.*
-- Tagalog: *Ang pangungusap na ito ay may apatnapu't apat na titik.*
-- فارسی: *این جمله دارای بیست و دو حرف.*
 - Italiano: *Questa frase contiene trentasette lettere.*
+- Kiswahili: *Sentensi hii ina herufi thelathini.*
+- Tagalog: *Ang pangungusap na ito ay may apatnapu't apat na titik.*
+- Türkçe: *Bu cümlede yirmi bir harf.*
+- فارسی: *این جمله دارای بیست و دو حرف.*
 
 ## Fitur Utama
-- **Lima belas bahasa**: Inggris, Indonesia, Spanyol, Arab, Prancis, Portugis, Urdu, Rusia, Jerman, Vietnam, Swahili, Turki, Tagalog, Persia, dan Italia — masing-masing dengan pengeja bilangan asli.
+- **Lima belas bahasa**: Arab, Indonesia, Inggris, Italia, Jerman, Persia, Portugis, Prancis, Rusia, Spanyol, Swahili, Tagalog, Turki, Urdu, dan Vietnam — masing-masing dengan pengeja bilangan asli.
 - **Kesesuaian tata bahasa**: Numeralia feminin dalam bahasa Spanyol, Prancis, Italia, dan Portugis; tunggal Jerman setelah numeralia yang berakhiran *ein*; Rusia *буква / буквы / букв*; *tamyīz* Arab lengkap; penutup kalimat Urdu *۔*; perangkai ligatur Tagalog (*-ng* / *-g* / *na*); urutan nomina Swahili (*herufi ...*); nomina tunggal Turki dan Persia (*harf* / *حرف*).
 - **Penghitungan sadar Unicode**: Huruf dari aksara apa pun dihitung; tanda gabung tidak.
-- **Tata letak RTL**: Arab, Urdu, dan Persia membalik seluruh antarmuka, bukan hanya hasilnya.
+- **Tata letak RTL**: Arab, Persia, dan Urdu membalik seluruh antarmuka, bukan hanya hasilnya.
 - **Tema Gelap/Terang**: Pilihan tema otomatis atau manual.
 - **Tombol Contoh**: Mengisi frasa pemula khusus bahasa dan langsung menghasilkan kalimat.
 - **Masukan panjang**: Klausa pembuka berupa area teks yang dapat diubah ukurannya, jadi Anda dapat menempel paragraf. Kata bilangan mencakup ratusan juta.
@@ -73,21 +73,21 @@ Pencarian menelusuri hingga 1000 nilai calon *n* mulai dari *b*, sehingga solusi
 
 | Bahasa | Contoh pemula | Nomina terhitung |
 | --- | --- | --- |
-| English | This sentence has | letter / letters |
 | Bahasa Indonesia | Kalimat ini memiliki | huruf |
-| Español | Esta oración tiene | letra / letras (numeralia feminin) |
-| العربية | هذه الجملة فيها | حرف / حرفان / أحرف / حرفًا |
-| Français | Cette phrase compte | lettre / lettres (numeralia feminin) |
-| Português | Esta frase tem | letra / letras (numeralia feminin) |
-| اردو | اس جملے میں | حرف / حروف |
-| Русский | В этом предложении | буква / буквы / букв |
 | Deutsch | Dieser Satz hat | Buchstabe / Buchstaben |
-| Tiếng Việt | Câu này có | chữ cái |
-| Kiswahili | Sentensi hii ina | herufi |
-| Türkçe | Bu cümlede | harf |
-| Tagalog | Ang pangungusap na ito ay may | titik (dengan ligatur -ng / -g / na) |
-| فارسی | این جمله دارای | حرف |
+| English | This sentence has | letter / letters |
+| Español | Esta oración tiene | letra / letras (numeralia feminin) |
+| Français | Cette phrase compte | lettre / lettres (numeralia feminin) |
 | Italiano | Questa frase contiene | lettera / lettere (numeralia feminin) |
+| Kiswahili | Sentensi hii ina | herufi |
+| Português | Esta frase tem | letra / letras (numeralia feminin) |
+| Tagalog | Ang pangungusap na ito ay may | titik (dengan ligatur -ng / -g / na) |
+| Tiếng Việt | Câu này có | chữ cái |
+| Türkçe | Bu cümlede | harf |
+| Русский | В этом предложении | буква / буквы / букв |
+| اردو | اس جملے میں | حرف / حروف |
+| العربية | هذه الجملة فيها | حرف / حرفان / أحرف / حرفًا |
+| فارسی | این جمله دارای | حرف |
 
 ## Privasi & Data
 Semua perhitungan terjadi secara lokal di peramban Anda. Tidak ada data yang dikirim ke server mana pun. Alat ini sepenuhnya offline setelah dimuat.
