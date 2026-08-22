@@ -984,7 +984,7 @@
 		<section class="card">
 			<div class="field">
 				<label id="labelInput" for="input">Input text</label>
-				<textarea id="input" rows="4" autocomplete="off" spellcheck="false"></textarea>
+				<textarea id="input" rows="4" autocomplete="off" spellcheck="false" aria-describedby="inputHint"></textarea>
 				<p class="hint" id="inputHint">Write the opening clause; the count and the word for
 					“letters” are appended in the selected language.</p>
 			</div>
@@ -997,7 +997,10 @@
 		</section>
 
 		<section class="card">
-			<h2 class="card-title" id="resultTitle">Result</h2>
+			<div class="row-flex" style="justify-content: space-between; align-items: center; margin-bottom: var(--sp-4);">
+				<h2 class="card-title" id="resultTitle" style="margin-bottom: 0;">Result</h2>
+				<button type="button" class="secondary hidden" id="copyBtn">Copy</button>
+			</div>
 			<div class="stack">
 				<div id="output" role="status"></div>
 				<p id="outputInfo" class="hint"></p>
@@ -1316,6 +1319,8 @@
 				generate: 'Generate sentence',
 				exampleBtn: 'Example',
 				resultTitle: 'Result',
+				copyBtn: 'Copy',
+				copied: 'Copied!',
 				errorEmpty: 'Please enter some text first.',
 				unableToGenerate: '[unable to generate stable sentence]',
 				stableInfo: n => `Stable after ${n} iterations.`,
@@ -1330,6 +1335,8 @@
 				generate: 'Buat kalimat',
 				exampleBtn: 'Contoh',
 				resultTitle: 'Hasil',
+				copyBtn: 'Salin',
+				copied: 'Tersalin!',
 				errorEmpty: 'Mohon masukkan teks terlebih dahulu.',
 				unableToGenerate: '[tidak dapat menghasilkan kalimat stabil]',
 				stableInfo: n => `Stabil setelah ${n} iterasi.`,
@@ -1344,6 +1351,8 @@
 				generate: 'Generar frase',
 				exampleBtn: 'Ejemplo',
 				resultTitle: 'Resultado',
+				copyBtn: 'Copiar',
+				copied: '¡Copiado!',
 				errorEmpty: 'Primero escribe algún texto.',
 				unableToGenerate: '[no se pudo generar una frase estable]',
 				stableInfo: n => `Estable tras ${n} iteraciones.`,
@@ -1360,6 +1369,8 @@
 				generate: 'توليد الجملة',
 				exampleBtn: 'مثال',
 				resultTitle: 'النتيجة',
+				copyBtn: 'نسخ',
+				copied: 'تم النسخ!',
 				errorEmpty: 'يرجى إدخال نص أولًا.',
 				unableToGenerate: '[تعذّر توليد جملة مستقرة]',
 				stableInfo: n => `استقرت بعد ${n} تكرارًا.`,
@@ -1376,6 +1387,8 @@
 				generate: 'Générer la phrase',
 				exampleBtn: 'Exemple',
 				resultTitle: 'Résultat',
+				copyBtn: 'Copier',
+				copied: 'Copié !',
 				errorEmpty: 'Veuillez d’abord saisir du texte.',
 				unableToGenerate: '[impossible de générer une phrase stable]',
 				stableInfo: n => `Stable après ${n} itérations.`,
@@ -1392,6 +1405,8 @@
 				generate: 'Gerar frase',
 				exampleBtn: 'Exemplo',
 				resultTitle: 'Resultado',
+				copyBtn: 'Copiar',
+				copied: 'Copiado!',
 				errorEmpty: 'Digite algum texto primeiro.',
 				unableToGenerate: '[não foi possível gerar uma frase estável]',
 				stableInfo: n => `Estável após ${n} iterações.`,
@@ -1408,6 +1423,8 @@
 				generate: 'جملہ بنائیں',
 				exampleBtn: 'مثال',
 				resultTitle: 'نتیجہ',
+				copyBtn: 'نقل کریں',
+				copied: 'منتقل ہو گیا!',
 				errorEmpty: 'پہلے کچھ متن لکھیں۔',
 				unableToGenerate: '[مستحکم جملہ نہیں بن سکا]',
 				stableInfo: n => `${n} تکرار کے بعد مستحکم۔`,
@@ -1424,6 +1441,8 @@
 				generate: 'Создать предложение',
 				exampleBtn: 'Пример',
 				resultTitle: 'Результат',
+				copyBtn: 'Копировать',
+				copied: 'Скопировано!',
 				errorEmpty: 'Сначала введите текст.',
 				unableToGenerate: '[не удалось построить устойчивое предложение]',
 				stableInfo: n => `Устойчиво после ${n} ${n % 10 === 1 && n % 100 !== 11 ? 'итерации' : 'итераций'}.`,
@@ -1440,6 +1459,8 @@
 				generate: 'Satz erzeugen',
 				exampleBtn: 'Beispiel',
 				resultTitle: 'Ergebnis',
+				copyBtn: 'Kopieren',
+				copied: 'Kopiert!',
 				errorEmpty: 'Bitte zuerst einen Text eingeben.',
 				unableToGenerate: '[kein stabiler Satz möglich]',
 				stableInfo: n => `Stabil nach ${n} Iterationen.`,
@@ -1456,6 +1477,8 @@
 				generate: 'Tạo câu',
 				exampleBtn: 'Ví dụ',
 				resultTitle: 'Kết quả',
+				copyBtn: 'Sao chép',
+				copied: 'Đã sao chép!',
 				errorEmpty: 'Vui lòng nhập văn bản trước.',
 				unableToGenerate: '[không thể tạo câu ổn định]',
 				stableInfo: n => `Ổn định sau ${n} lần lặp.`,
@@ -1472,6 +1495,8 @@
 				generate: 'Tengeneza sentensi',
 				exampleBtn: 'Mfano',
 				resultTitle: 'Matokeo',
+				copyBtn: 'Nakili',
+				copied: 'Imenakiliwa!',
 				errorEmpty: 'Tafadhali ingiza maandishi kwanza.',
 				unableToGenerate: '[haikuweza kuzalisha sentensi thabiti]',
 				stableInfo: n => `Imara baada ya marudio ${n}.`,
@@ -1488,6 +1513,8 @@
 				generate: 'Cümle oluştur',
 				exampleBtn: 'Örnek',
 				resultTitle: 'Sonuç',
+				copyBtn: 'Kopyala',
+				copied: 'Kopyalandı!',
 				errorEmpty: 'Lütfen önce bir metin girin.',
 				unableToGenerate: '[kararlı bir cümle oluşturulamadı]',
 				stableInfo: n => `${n} yinelemeden sonra kararlı.`,
@@ -1504,6 +1531,8 @@
 				generate: 'Bumuo ng pangungusap',
 				exampleBtn: 'Halimbawa',
 				resultTitle: 'Resulta',
+				copyBtn: 'Kopyahin',
+				copied: 'Kopyado na!',
 				errorEmpty: 'Mangyaring magpasok muna ng teksto.',
 				unableToGenerate: '[hindi makabuo ng matatag na pangungusap]',
 				stableInfo: n => `Matatag pagkatapos ng ${n} pag-ulit.`,
@@ -1520,6 +1549,8 @@
 				generate: 'تولید جمله',
 				exampleBtn: 'مثال',
 				resultTitle: 'نتیجه',
+				copyBtn: 'کپی',
+				copied: 'کپی شد!',
 				errorEmpty: 'لطفاً ابتدا متنی وارد کنید.',
 				unableToGenerate: '[امکان ایجاد جمله پایدار وجود ندارد]',
 				stableInfo: n => `پس از ${n} تکرار پایدار شد.`,
@@ -1536,6 +1567,8 @@
 				generate: 'Genera frase',
 				exampleBtn: 'Esempio',
 				resultTitle: 'Risultato',
+				copyBtn: 'Copia',
+				copied: 'Copiato!',
 				errorEmpty: 'Inserisci prima del testo.',
 				unableToGenerate: '[impossibile generare una frase stabile]',
 				stableInfo: n => `Stabile dopo ${n} ${n === 1 ? 'iterazione' : 'iterazioni'}.`,
@@ -2160,6 +2193,9 @@
 					elements.input.value = this.string('placeholder');
 					this.generateSentence();
 				});
+				if (elements.copyBtn) {
+					elements.copyBtn.addEventListener('click', () => this.copyResult());
+				}
 			}
 
 			string(key) { return text[this.language]?.[key] ?? text.en[key] ?? key; }
@@ -2168,7 +2204,7 @@
 				const previousExample = text[this.language]?.placeholder;
 				this.language = AppSettings.applyLang(language);
 
-				['title', 'subtitle', 'labelInput', 'inputHint', 'generate', 'exampleBtn', 'resultTitle']
+				['title', 'subtitle', 'labelInput', 'inputHint', 'generate', 'exampleBtn', 'resultTitle', 'copyBtn']
 					.forEach(key => {
 						if (elements[key]) elements[key].textContent = this.string(key);
 					});
@@ -2195,10 +2231,27 @@
 				this.showResult(SentenceGenerator.generate(input, this.language));
 			}
 
+			async copyResult() {
+				const sentence = elements.output.textContent.trim();
+				if (!sentence) return;
+				try {
+					await navigator.clipboard.writeText(sentence);
+					if (elements.copyBtn) {
+						elements.copyBtn.textContent = this.string('copied');
+						setTimeout(() => {
+							if (elements.copyBtn) elements.copyBtn.textContent = this.string('copyBtn');
+						}, 2000);
+					}
+				} catch (e) {
+					/* Clipboard access denied or unsupported */
+				}
+			}
+
 			showError(message) {
 				elements.output.textContent = message;
 				elements.output.classList.add('error');
 				elements.outputInfo.textContent = '';
+				if (elements.copyBtn) elements.copyBtn.classList.add('hidden');
 			}
 
 			showResult(result) {
@@ -2207,6 +2260,10 @@
 				elements.outputInfo.textContent = result.stable
 					? this.string('stableInfo')(result.iterations)
 					: this.string('unstableInfo')(result.iterations);
+				if (elements.copyBtn) {
+					elements.copyBtn.classList.toggle('hidden', !result.stable);
+					elements.copyBtn.textContent = this.string('copyBtn');
+				}
 			}
 		}
 
