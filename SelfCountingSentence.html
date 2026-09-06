@@ -2108,14 +2108,8 @@
 		const elements = new Proxy({}, { get: (_, id) => document.getElementById(id) });
 
 		/* Unicode-aware: Arabic, Cyrillic, Vietnamese diacritics and ß all count
-		   as letters; combining marks (Arabic harakat) do not. A fresh regex
-		   per call keeps lastIndex from leaking across long pasted inputs. */
-		const countLetters = value => {
-			let count = 0;
-			const re = /\p{L}/gu;
-			while (re.test(value)) count++;
-			return count;
-		};
+		   as letters; combining marks (Arabic harakat) do not. */
+		const countLetters = value => value.match(/\p{L}/gu)?.length ?? 0;
 
 		/* ---------- The search ----------
 		 The sentence is always `${input} ${tail(n)}`, and the input does not
