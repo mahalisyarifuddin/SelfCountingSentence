@@ -983,7 +983,10 @@
 	<main class="app-main">
 		<section class="card">
 			<div class="field">
-				<label id="labelInput" for="input">Input text</label>
+				<div class="row-flex" style="justify-content: space-between; align-items: center; margin-bottom: var(--sp-1);">
+					<label id="labelInput" for="input" style="margin-bottom: 0;">Input text</label>
+					<span id="letterCount" class="badge" aria-live="polite">0 letters</span>
+				</div>
 				<textarea id="input" rows="4" autocomplete="off" spellcheck="false" aria-describedby="inputHint"></textarea>
 				<p class="hint" id="inputHint">Write the opening clause; the count and the word for
 					“letters” are appended in the selected language.</p>
@@ -1317,6 +1320,7 @@
 				inputHint: 'Write the opening clause; the count and the word for “letters” are appended in the selected language.',
 				placeholder: 'This sentence has',
 				generate: 'Generate sentence',
+				generateHint: 'Generate sentence (Ctrl+Enter / ⌘↩)',
 				exampleBtn: 'Example',
 				resultTitle: 'Result',
 				copyBtn: 'Copy',
@@ -1324,7 +1328,8 @@
 				errorEmpty: 'Please enter some text first.',
 				unableToGenerate: '[unable to generate stable sentence]',
 				stableInfo: n => `Stable after ${n} iterations.`,
-				unstableInfo: n => `No stable solution found. Gave up after ${n} iterations.`
+				unstableInfo: n => `No stable solution found. Gave up after ${n} iterations.`,
+				letterCount: n => `${n} ${n === 1 ? 'letter' : 'letters'}`
 			},
 			id: {
 				title: 'Pembuat Kalimat Merujuk Diri',
@@ -1333,6 +1338,7 @@
 				inputHint: 'Tulis klausa pembuka; jumlah dan kata “huruf” akan ditambahkan dalam bahasa yang dipilih.',
 				placeholder: 'Kalimat ini memiliki',
 				generate: 'Buat kalimat',
+				generateHint: 'Buat kalimat (Ctrl+Enter / ⌘↩)',
 				exampleBtn: 'Contoh',
 				resultTitle: 'Hasil',
 				copyBtn: 'Salin',
@@ -1340,7 +1346,8 @@
 				errorEmpty: 'Mohon masukkan teks terlebih dahulu.',
 				unableToGenerate: '[tidak dapat menghasilkan kalimat stabil]',
 				stableInfo: n => `Stabil setelah ${n} iterasi.`,
-				unstableInfo: n => `Tidak ditemukan solusi stabil. Berhenti setelah ${n} iterasi.`
+				unstableInfo: n => `Tidak ditemukan solusi stabil. Berhenti setelah ${n} iterasi.`,
+				letterCount: n => `${n} huruf`
 			},
 			es: {
 				title: 'Generador de Frases Autorreferentes',
@@ -1349,6 +1356,7 @@
 				inputHint: 'Escribe la oración inicial; el número y la palabra “letras” se añaden en el idioma elegido.',
 				placeholder: 'Esta oración tiene',
 				generate: 'Generar frase',
+				generateHint: 'Generar frase (Ctrl+Enter / ⌘↩)',
 				exampleBtn: 'Ejemplo',
 				resultTitle: 'Resultado',
 				copyBtn: 'Copiar',
@@ -1357,6 +1365,7 @@
 				unableToGenerate: '[no se pudo generar una frase estable]',
 				stableInfo: n => `Estable tras ${n} iteraciones.`,
 				unstableInfo: n => `No se encontró una solución estable. Se detuvo tras ${n} iteraciones.`,
+				letterCount: n => `${n} ${n === 1 ? 'letra' : 'letras'}`,
 				prefTitle: 'Ajustes', prefBtn: 'Ajustes', langLabel: 'Idioma',
 				themeLabel: 'Tema', themeAuto: 'Automático', themeLight: 'Claro', themeDark: 'Oscuro'
 			},
@@ -1367,6 +1376,7 @@
 				inputHint: 'اكتب بداية الجملة؛ يُضاف العدد وكلمة «حرف» باللغة المختارة.',
 				placeholder: 'هذه الجملة فيها',
 				generate: 'توليد الجملة',
+				generateHint: 'توليد الجملة (Ctrl+Enter / ⌘↩)',
 				exampleBtn: 'مثال',
 				resultTitle: 'النتيجة',
 				copyBtn: 'نسخ',
@@ -1375,6 +1385,7 @@
 				unableToGenerate: '[تعذّر توليد جملة مستقرة]',
 				stableInfo: n => `استقرت بعد ${n} تكرارًا.`,
 				unstableInfo: n => `لم يُعثر على حل مستقر. توقف البحث بعد ${n} تكرارًا.`,
+				letterCount: n => `${n} ${n === 1 ? 'حرف' : 'أحرف'}`,
 				prefTitle: 'الإعدادات', prefBtn: 'الإعدادات', langLabel: 'اللغة',
 				themeLabel: 'السمة', themeAuto: 'تلقائي', themeLight: 'فاتح', themeDark: 'داكن'
 			},
@@ -1385,6 +1396,7 @@
 				inputHint: 'Écrivez le début de la phrase ; le nombre et le mot « lettres » sont ajoutés dans la langue choisie.',
 				placeholder: 'Cette phrase compte',
 				generate: 'Générer la phrase',
+				generateHint: 'Générer la phrase (Ctrl+Enter / ⌘↩)',
 				exampleBtn: 'Exemple',
 				resultTitle: 'Résultat',
 				copyBtn: 'Copier',
@@ -1393,6 +1405,7 @@
 				unableToGenerate: '[impossible de générer une phrase stable]',
 				stableInfo: n => `Stable après ${n} itérations.`,
 				unstableInfo: n => `Aucune solution stable trouvée. Arrêt après ${n} itérations.`,
+				letterCount: n => `${n} ${n === 1 ? 'lettre' : 'lettres'}`,
 				prefTitle: 'Paramètres', prefBtn: 'Paramètres', langLabel: 'Langue',
 				themeLabel: 'Thème', themeAuto: 'Automatique', themeLight: 'Clair', themeDark: 'Sombre'
 			},
@@ -1403,6 +1416,7 @@
 				inputHint: 'Escreva a oração inicial; o número e a palavra “letras” são acrescentados no idioma escolhido.',
 				placeholder: 'Esta frase tem',
 				generate: 'Gerar frase',
+				generateHint: 'Gerar frase (Ctrl+Enter / ⌘↩)',
 				exampleBtn: 'Exemplo',
 				resultTitle: 'Resultado',
 				copyBtn: 'Copiar',
@@ -1411,6 +1425,7 @@
 				unableToGenerate: '[não foi possível gerar uma frase estável]',
 				stableInfo: n => `Estável após ${n} iterações.`,
 				unstableInfo: n => `Nenhuma solução estável encontrada. Parou após ${n} iterações.`,
+				letterCount: n => `${n} ${n === 1 ? 'letra' : 'letras'}`,
 				prefTitle: 'Configurações', prefBtn: 'Configurações', langLabel: 'Idioma',
 				themeLabel: 'Tema', themeAuto: 'Automático', themeLight: 'Claro', themeDark: 'Escuro'
 			},
@@ -1421,6 +1436,7 @@
 				inputHint: 'جملے کا آغاز لکھیے؛ تعداد اور لفظ «حروف» منتخب زبان میں شامل کر دیے جائیں گے۔',
 				placeholder: 'اس جملے میں',
 				generate: 'جملہ بنائیں',
+				generateHint: 'جملہ بنائیں (Ctrl+Enter / ⌘↩)',
 				exampleBtn: 'مثال',
 				resultTitle: 'نتیجہ',
 				copyBtn: 'نقل کریں',
@@ -1429,6 +1445,7 @@
 				unableToGenerate: '[مستحکم جملہ نہیں بن سکا]',
 				stableInfo: n => `${n} تکرار کے بعد مستحکم۔`,
 				unstableInfo: n => `کوئی مستحکم حل نہیں ملا۔ ${n} تکرار کے بعد تلاش روک دی گئی۔`,
+				letterCount: n => `${n} ${n === 1 ? 'حرف' : 'حروف'}`,
 				prefTitle: 'ترتیبات', prefBtn: 'ترتیبات', langLabel: 'زبان',
 				themeLabel: 'تھیم', themeAuto: 'خودکار', themeLight: 'روشن', themeDark: 'تاریک'
 			},
@@ -1439,6 +1456,7 @@
 				inputHint: 'Напишите начало предложения; число и слово «буквы» добавятся на выбранном языке.',
 				placeholder: 'В этом предложении',
 				generate: 'Создать предложение',
+				generateHint: 'Создать предложение (Ctrl+Enter / ⌘↩)',
 				exampleBtn: 'Пример',
 				resultTitle: 'Результат',
 				copyBtn: 'Копировать',
@@ -1447,6 +1465,7 @@
 				unableToGenerate: '[не удалось построить устойчивое предложение]',
 				stableInfo: n => `Устойчиво после ${n} ${n % 10 === 1 && n % 100 !== 11 ? 'итерации' : 'итераций'}.`,
 				unstableInfo: n => `Устойчивое решение не найдено. Поиск остановлен после ${n} итераций.`,
+				letterCount: n => `${n} ${ruAgree(n, 'буква', 'буквы', 'букв')}`,
 				prefTitle: 'Настройки', prefBtn: 'Настройки', langLabel: 'Язык',
 				themeLabel: 'Тема', themeAuto: 'Авто', themeLight: 'Светлая', themeDark: 'Тёмная'
 			},
@@ -1457,6 +1476,7 @@
 				inputHint: 'Schreiben Sie den Satzanfang; Anzahl und das Wort „Buchstaben“ werden in der gewählten Sprache angehängt.',
 				placeholder: 'Dieser Satz hat',
 				generate: 'Satz erzeugen',
+				generateHint: 'Satz erzeugen (Ctrl+Enter / ⌘↩)',
 				exampleBtn: 'Beispiel',
 				resultTitle: 'Ergebnis',
 				copyBtn: 'Kopieren',
@@ -1465,6 +1485,7 @@
 				unableToGenerate: '[kein stabiler Satz möglich]',
 				stableInfo: n => `Stabil nach ${n} Iterationen.`,
 				unstableInfo: n => `Keine stabile Lösung gefunden. Abbruch nach ${n} Iterationen.`,
+				letterCount: n => `${n} ${n === 1 ? 'Buchstabe' : 'Buchstaben'}`,
 				prefTitle: 'Einstellungen', prefBtn: 'Einstellungen', langLabel: 'Sprache',
 				themeLabel: 'Design', themeAuto: 'Automatisch', themeLight: 'Hell', themeDark: 'Dunkel'
 			},
@@ -1475,6 +1496,7 @@
 				inputHint: 'Viết mệnh đề mở đầu; số đếm và cụm “chữ cái” sẽ được thêm theo ngôn ngữ đã chọn.',
 				placeholder: 'Câu này có',
 				generate: 'Tạo câu',
+				generateHint: 'Tạo câu (Ctrl+Enter / ⌘↩)',
 				exampleBtn: 'Ví dụ',
 				resultTitle: 'Kết quả',
 				copyBtn: 'Sao chép',
@@ -1483,6 +1505,7 @@
 				unableToGenerate: '[không thể tạo câu ổn định]',
 				stableInfo: n => `Ổn định sau ${n} lần lặp.`,
 				unstableInfo: n => `Không tìm thấy nghiệm ổn định. Dừng sau ${n} lần lặp.`,
+				letterCount: n => `${n} chữ cái`,
 				prefTitle: 'Cài đặt', prefBtn: 'Cài đặt', langLabel: 'Ngôn ngữ',
 				themeLabel: 'Giao diện', themeAuto: 'Tự động', themeLight: 'Sáng', themeDark: 'Tối'
 			},
@@ -1493,6 +1516,7 @@
 				inputHint: 'Andika kishazi cha kuanzia; idadi na neno la “herufi” vitaongezwa katika lugha iliyochaguliwa.',
 				placeholder: 'Sentensi hii ina',
 				generate: 'Tengeneza sentensi',
+				generateHint: 'Tengeneza sentensi (Ctrl+Enter / ⌘↩)',
 				exampleBtn: 'Mfano',
 				resultTitle: 'Matokeo',
 				copyBtn: 'Nakili',
@@ -1501,6 +1525,7 @@
 				unableToGenerate: '[haikuweza kuzalisha sentensi thabiti]',
 				stableInfo: n => `Imara baada ya marudio ${n}.`,
 				unstableInfo: n => `Hakuna suluhisho thabiti lililopatikana. Imeacha baada ya marudio ${n}.`,
+				letterCount: n => `herufi ${n}`,
 				prefTitle: 'Mipangilio', prefBtn: 'Mipangilio', langLabel: 'Lugha',
 				themeLabel: 'Mandhari', themeAuto: 'Otomatiki', themeLight: 'Mwanga', themeDark: 'Giza'
 			},
@@ -1511,6 +1536,7 @@
 				inputHint: 'Giriş cümlesini yazın; sayı ve “harf” kelimesi seçilen dilde eklenir.',
 				placeholder: 'Bu cümlede',
 				generate: 'Cümle oluştur',
+				generateHint: 'Cümle oluştur (Ctrl+Enter / ⌘↩)',
 				exampleBtn: 'Örnek',
 				resultTitle: 'Sonuç',
 				copyBtn: 'Kopyala',
@@ -1519,6 +1545,7 @@
 				unableToGenerate: '[kararlı bir cümle oluşturulamadı]',
 				stableInfo: n => `${n} yinelemeden sonra kararlı.`,
 				unstableInfo: n => `Kararlı bir çözüm bulunamadı. ${n} yinelemeden sonra durduruldu.`,
+				letterCount: n => `${n} harf`,
 				prefTitle: 'Ayarlar', prefBtn: 'Ayarlar', langLabel: 'Dil',
 				themeLabel: 'Tema', themeAuto: 'Otomatik', themeLight: 'Açık', themeDark: 'Koyu'
 			},
@@ -1529,6 +1556,7 @@
 				inputHint: 'Isulat ang panimulang sugnay; ang bilang at ang salita para sa “titik” ay idaragdag sa napiling wika.',
 				placeholder: 'Ang pangungusap na ito ay may',
 				generate: 'Bumuo ng pangungusap',
+				generateHint: 'Bumuo ng pangungusap (Ctrl+Enter / ⌘↩)',
 				exampleBtn: 'Halimbawa',
 				resultTitle: 'Resulta',
 				copyBtn: 'Kopyahin',
@@ -1537,6 +1565,7 @@
 				unableToGenerate: '[hindi makabuo ng matatag na pangungusap]',
 				stableInfo: n => `Matatag pagkatapos ng ${n} pag-ulit.`,
 				unstableInfo: n => `Walang nahanap na matatag na solusyon. Huminto pagkatapos ng ${n} pag-ulit.`,
+				letterCount: n => `${n} na titik`,
 				prefTitle: 'Mga Setting', prefBtn: 'Mga Setting', langLabel: 'Wika',
 				themeLabel: 'Tema', themeAuto: 'Awtomatiko', themeLight: 'Maliwanag', themeDark: 'Madilim'
 			},
@@ -1547,6 +1576,7 @@
 				inputHint: 'بخش آغازین جمله را بنویسید؛ تعداد و کلمه «حرف» به زبان انتخابی اضافه می‌شوند.',
 				placeholder: 'این جمله دارای',
 				generate: 'تولید جمله',
+				generateHint: 'تولید جمله (Ctrl+Enter / ⌘↩)',
 				exampleBtn: 'مثال',
 				resultTitle: 'نتیجه',
 				copyBtn: 'کپی',
@@ -1555,6 +1585,7 @@
 				unableToGenerate: '[امکان ایجاد جمله پایدار وجود ندارد]',
 				stableInfo: n => `پس از ${n} تکرار پایدار شد.`,
 				unstableInfo: n => `هیچ راه‌حل پایداری یافت نشد. پس از ${n} تکرار متوقف شد.`,
+				letterCount: n => `${n} حرف`,
 				prefTitle: 'تنظیمات', prefBtn: 'تنظیمات', langLabel: 'زبان',
 				themeLabel: 'طرح', themeAuto: 'خودکار', themeLight: 'روشن', themeDark: 'تاریک'
 			},
@@ -1565,6 +1596,7 @@
 				inputHint: 'Scrivi la frase iniziale; il conteggio e la parola “lettere” vengono aggiunti nella lingua selezionata.',
 				placeholder: 'Questa frase contiene',
 				generate: 'Genera frase',
+				generateHint: 'Genera frase (Ctrl+Enter / ⌘↩)',
 				exampleBtn: 'Esempio',
 				resultTitle: 'Risultato',
 				copyBtn: 'Copia',
@@ -1573,6 +1605,7 @@
 				unableToGenerate: '[impossibile generare una frase stabile]',
 				stableInfo: n => `Stabile dopo ${n} ${n === 1 ? 'iterazione' : 'iterazioni'}.`,
 				unstableInfo: n => `Nessuna soluzione stabile trovata. Interrotto dopo ${n} iterazioni.`,
+				letterCount: n => `${n} ${n === 1 ? 'lettera' : 'lettere'}`,
 				prefTitle: 'Impostazioni', prefBtn: 'Impostazioni', langLabel: 'Lingua',
 				themeLabel: 'Tema', themeAuto: 'Automatico', themeLight: 'Chiaro', themeDark: 'Scuro'
 			}
@@ -2176,6 +2209,7 @@
 
 			setup() {
 				elements.language.addEventListener('change', e => this.lang(e.target.value));
+				elements.input.addEventListener('input', () => this.updateLetterCount());
 				elements.input.addEventListener('keydown', e => {
 					if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
 						e.preventDefault();
@@ -2185,6 +2219,7 @@
 				elements.generate.addEventListener('click', () => this.generateSentence());
 				elements.exampleBtn.addEventListener('click', () => {
 					elements.input.value = this.string('placeholder');
+					this.updateLetterCount();
 					this.generateSentence();
 				});
 				if (elements.copyBtn) {
@@ -2193,6 +2228,13 @@
 			}
 
 			string(key) { return text[this.language]?.[key] ?? text.en[key] ?? key; }
+
+			updateLetterCount() {
+				if (!elements.letterCount) return;
+				const count = countLetters(elements.input.value);
+				const formatter = text[this.language]?.letterCount ?? text.en.letterCount;
+				elements.letterCount.textContent = formatter(count);
+			}
 
 			lang(language) {
 				const previousExample = text[this.language]?.placeholder;
@@ -2204,6 +2246,9 @@
 					});
 				document.title = this.string('title');
 				elements.input.placeholder = this.string('placeholder');
+				if (elements.generate) {
+					elements.generate.title = this.string('generateHint');
+				}
 
 				// Arabic and Urdu flip the whole shell, not just the result text.
 				document.documentElement.dir = RTL.includes(this.language) ? 'rtl' : 'ltr';
@@ -2213,6 +2258,7 @@
 				if (elements.input.value.trim() === previousExample) {
 					elements.input.value = this.string('placeholder');
 				}
+				this.updateLetterCount();
 				if (elements.output.textContent.trim()) this.generateSentence();
 			}
 
