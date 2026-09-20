@@ -1002,11 +1002,11 @@
 		<section class="card">
 			<div class="row-flex" style="justify-content: space-between; align-items: center; margin-bottom: var(--sp-4);">
 				<h2 class="card-title" id="resultTitle" style="margin-bottom: 0;">Result</h2>
-				<button type="button" class="secondary hidden" id="copyBtn">Copy</button>
+				<button type="button" class="secondary hidden" id="copyBtn" aria-live="polite">Copy</button>
 			</div>
 			<div class="stack">
 				<div id="output" role="status"></div>
-				<p id="outputInfo" class="hint"></p>
+				<p id="outputInfo" class="hint" role="status" aria-live="polite"></p>
 			</div>
 		</section>
 	</main>
@@ -2274,16 +2274,36 @@
 			async copyResult() {
 				const sentence = elements.output.textContent.trim();
 				if (!sentence) return;
+				let success = false;
 				try {
-					await navigator.clipboard.writeText(sentence);
-					if (elements.copyBtn) {
-						elements.copyBtn.textContent = this.string('copied');
-						setTimeout(() => {
-							if (elements.copyBtn) elements.copyBtn.textContent = this.string('copyBtn');
-						}, 2000);
+					if (navigator.clipboard && navigator.clipboard.writeText) {
+						await navigator.clipboard.writeText(sentence);
+						success = true;
 					}
 				} catch (e) {
-					/* Clipboard access denied or unsupported */
+					/* Clipboard API restricted or unsupported */
+				}
+
+				if (!success) {
+					try {
+						const ta = document.createElement('textarea');
+						ta.value = sentence;
+						ta.style.position = 'fixed';
+						ta.style.opacity = '0';
+						document.body.appendChild(ta);
+						ta.select();
+						success = document.execCommand('copy');
+						document.body.removeChild(ta);
+					} catch (e) {
+						/* Fallback copy failed */
+					}
+				}
+
+				if (success && elements.copyBtn) {
+					elements.copyBtn.textContent = this.string('copied');
+					setTimeout(() => {
+						if (elements.copyBtn) elements.copyBtn.textContent = this.string('copyBtn');
+					}, 2000);
 				}
 			}
 
