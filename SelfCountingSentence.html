@@ -1991,16 +1991,7 @@
 				}
 				if (n < 1000) {
 					const hn = Math.floor(n / 100), r = n % 100;
-					let h;
-					if (hn === 1) h = 'isang daan';
-					else if (hn === 2) h = 'dalawang daan';
-					else if (hn === 3) h = 'tatlong daan';
-					else if (hn === 4) h = 'apat na raan';
-					else if (hn === 5) h = 'limang daan';
-					else if (hn === 6) h = 'anim na raan';
-					else if (hn === 7) h = 'pitong daan';
-					else if (hn === 8) h = 'walong daan';
-					else if (hn === 9) h = 'siyam na raan';
+					const h = ['', 'isang daan', 'dalawang daan', 'tatlong daan', 'apat na raan', 'limang daan', 'anim na raan', 'pitong daan', 'walong daan', 'siyam na raan'][hn];
 					if (!r) return h;
 					return `${h}'t ${words.tl(r)}`;
 				}
@@ -2115,13 +2106,7 @@
 			},
 
 			/* 1 буква · 2–4 буквы · 5–20 букв, with the 11–14 exception */
-			ru(n) {
-				const mod10 = n % 10, mod100 = n % 100;
-				const noun = (mod10 === 1 && mod100 !== 11) ? 'буква'
-					: (mod10 >= 2 && mod10 <= 4 && !(mod100 >= 12 && mod100 <= 14)) ? 'буквы'
-						: 'букв';
-				return `${words.ru(n)} ${noun}.`;
-			},
+			ru: n => `${words.ru(n)} ${ruAgree(n, 'буква', 'буквы', 'букв')}.`,
 
 			/* Arabic counted-noun agreement (tamyīz):
 			   1 حرف واحد · 2 حرفان · 3–10 plural genitive · 11–99 singular
