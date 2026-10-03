@@ -2079,24 +2079,25 @@
 		/* ---------- The counted tail ----------
 		   numeral + the word for "letters" in the form this number demands +
 		   the sentence terminator. */
+		const nounTail = (speller, sg, pl, dot = '.') => n => `${speller(n)} ${n === 1 ? sg : pl}${dot}`;
+
 		const tail = {
-			en: n => `${words.en(n)} ${n === 1 ? 'letter' : 'letters'}.`,
+			en: nounTail(words.en, 'letter', 'letters'),
 			id: n => `${words.id(n)} huruf.`,
-			es: n => `${words.es(n)} ${n === 1 ? 'letra' : 'letras'}.`,
-			fr: n => `${words.fr(n)} ${n === 1 ? 'lettre' : 'lettres'}.`,
-			pt: n => `${words.pt(n)} ${n === 1 ? 'letra' : 'letras'}.`,
+			es: nounTail(words.es, 'letra', 'letras'),
+			fr: nounTail(words.fr, 'lettre', 'lettres'),
+			pt: nounTail(words.pt, 'letra', 'letras'),
 			vi: n => `${words.vi(n)} chữ cái.`,
 			ur: n => `${words.ur(n)} ${n === 1 ? 'حرف' : 'حروف'}۔`,
 			sw: n => `herufi ${words.sw(n)}.`,
 			tr: n => `${words.tr(n)} harf.`,
 			tl(n) {
 				const w = words.tl(n);
-				if (/[aeiou]$/i.test(w)) return `${w}ng titik.`;
-				if (/n$/i.test(w)) return `${w}g titik.`;
-				return `${w} na titik.`;
+				const link = /[aeiou]$/i.test(w) ? 'ng' : (/n$/i.test(w) ? 'g' : ' na');
+				return `${w}${link} titik.`;
 			},
 			fa: n => `${words.fa(n)} حرف.`,
-			it: n => `${words.it(n)} ${n === 1 ? 'lettera' : 'lettere'}.`,
+			it: nounTail(words.it, 'lettera', 'lettere'),
 
 			/* singular noun after any numeral ending in "ein": ein Buchstabe,
 			   einhundertein Buchstabe — but einundzwanzig Buchstaben */
@@ -2115,10 +2116,8 @@
 				if (n === 1) return 'حرف واحد.';
 				if (n === 2) return 'حرفان.';
 				if (n <= 10) return `${words.ar(n)} أحرف.`;
-				if (n % 100 === 0 || (n > 100 && n % 100 === 0)) return `${words.ar(n)} حرف.`;
-				if (n < 100) return `${words.ar(n)} حرفًا.`;
 				const r = n % 100;
-				if (r === 1 || r === 2) return `${words.ar(n)} حرف.`;
+				if (r === 0 || r === 1 || r === 2) return `${words.ar(n)} حرف.`;
 				return `${words.ar(n)} ${r <= 10 ? 'أحرف' : 'حرفًا'}.`;
 			}
 		};
