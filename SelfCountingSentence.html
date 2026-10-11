@@ -1998,16 +1998,14 @@
 			if (n < 1000000) {
 				const tn = Math.floor(n / 1000), r = n % 1000;
 				const w = words.tl(tn);
-				const link = /[aeiou]$/i.test(w) ? 'ng' : (/n$/i.test(w) ? 'g' : ' na');
-				const th = `${w}${link} libo`;
+				const th = `${w}${tlLink(w)} libo`;
 				if (!r) return th;
 				return `${th} at ${words.tl(r)}`;
 			}
 			if (n < 1000000000) {
 				const m = Math.floor(n / 1000000), r = n % 1000000;
 				const w = words.tl(m);
-				const link = /[aeiou]$/i.test(w) ? 'ng' : (/n$/i.test(w) ? 'g' : ' na');
-				const th = `${w}${link} milyon`;
+				const th = `${w}${tlLink(w)} milyon`;
 				if (!r) return th;
 				return `${th} at ${words.tl(r)}`;
 			}
@@ -2079,24 +2077,21 @@
 		/* ---------- The counted tail ----------
 		   numeral + the word for "letters" in the form this number demands +
 		   the sentence terminator. */
-		const nounTail = (speller, sg, pl, dot = '.') => n => `${speller(n)} ${n === 1 ? sg : pl}${dot}`;
+		const tlLink = w => /[aeiou]$/i.test(w) ? 'ng' : (/n$/i.test(w) ? 'g' : ' na');
+		const nounTail = (speller, sg, pl = sg, dot = '.') => n => `${speller(n)} ${n === 1 ? sg : pl}${dot}`;
 
 		const tail = {
 			en: nounTail(words.en, 'letter', 'letters'),
-			id: n => `${words.id(n)} huruf.`,
+			id: nounTail(words.id, 'huruf'),
 			es: nounTail(words.es, 'letra', 'letras'),
 			fr: nounTail(words.fr, 'lettre', 'lettres'),
 			pt: nounTail(words.pt, 'letra', 'letras'),
-			vi: n => `${words.vi(n)} chữ cái.`,
-			ur: n => `${words.ur(n)} ${n === 1 ? 'حرف' : 'حروف'}۔`,
+			vi: nounTail(words.vi, 'chữ cái'),
+			ur: nounTail(words.ur, 'حرف', 'حروف', '۔'),
 			sw: n => `herufi ${words.sw(n)}.`,
-			tr: n => `${words.tr(n)} harf.`,
-			tl(n) {
-				const w = words.tl(n);
-				const link = /[aeiou]$/i.test(w) ? 'ng' : (/n$/i.test(w) ? 'g' : ' na');
-				return `${w}${link} titik.`;
-			},
-			fa: n => `${words.fa(n)} حرف.`,
+			tr: nounTail(words.tr, 'harf'),
+			tl: n => `${words.tl(n)}${tlLink(words.tl(n))} titik.`,
+			fa: nounTail(words.fa, 'حرف'),
 			it: nounTail(words.it, 'lettera', 'lettere'),
 
 			/* singular noun after any numeral ending in "ein": ein Buchstabe,
