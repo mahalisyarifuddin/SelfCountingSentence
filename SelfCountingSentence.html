@@ -934,6 +934,11 @@
 			display: none;
 		}
 
+		#output.placeholder {
+			color: var(--text-muted);
+			font-style: italic;
+		}
+
 		#output.error {
 			background: var(--danger-bg);
 			border-color: var(--danger);
@@ -1314,6 +1319,7 @@
 		   ===================================================================== */
 		const text = {
 			en: {
+				outputPlaceholder: 'Your generated sentence will appear here.',
 				title: 'Self-Referential Sentence Generator',
 				subtitle: 'Completes your text with a phrase that correctly counts its own letters.',
 				labelInput: 'Input text',
@@ -1332,6 +1338,7 @@
 				letterCount: n => `${n} ${n === 1 ? 'letter' : 'letters'}`
 			},
 			id: {
+				outputPlaceholder: 'Kalimat yang dihasilkan akan muncul di sini.',
 				title: 'Pembuat Kalimat Merujuk Diri',
 				subtitle: 'Melengkapi teks Anda dengan frasa yang menghitung jumlah hurufnya sendiri dengan benar.',
 				labelInput: 'Teks masukan',
@@ -1350,6 +1357,7 @@
 				letterCount: n => `${n} huruf`
 			},
 			es: {
+				outputPlaceholder: 'Tu frase generada aparecerá aquí.',
 				title: 'Generador de Frases Autorreferentes',
 				subtitle: 'Completa tu texto con una frase que cuenta correctamente sus propias letras.',
 				labelInput: 'Texto de entrada',
@@ -1370,6 +1378,7 @@
 				themeLabel: 'Tema', themeAuto: 'Automático', themeLight: 'Claro', themeDark: 'Oscuro'
 			},
 			ar: {
+				outputPlaceholder: 'ستظهر الجملة الموّلدة هنا.',
 				title: 'مولّد الجمل ذاتية الإشارة',
 				subtitle: 'يكمل نصك بعبارة تَعُدّ حروفها بنفسها عدًّا صحيحًا.',
 				labelInput: 'النص المُدخل',
@@ -1390,6 +1399,7 @@
 				themeLabel: 'السمة', themeAuto: 'تلقائي', themeLight: 'فاتح', themeDark: 'داكن'
 			},
 			fr: {
+				outputPlaceholder: 'Votre phrase générée apparaîtra ici.',
 				title: 'Générateur de Phrases Autoréférentes',
 				subtitle: 'Complète votre texte par une phrase qui compte correctement ses propres lettres.',
 				labelInput: 'Texte saisi',
@@ -1410,6 +1420,7 @@
 				themeLabel: 'Thème', themeAuto: 'Automatique', themeLight: 'Clair', themeDark: 'Sombre'
 			},
 			pt: {
+				outputPlaceholder: 'Sua frase gerada aparecerá aqui.',
 				title: 'Gerador de Frases Autorreferentes',
 				subtitle: 'Completa o seu texto com uma frase que conta corretamente as próprias letras.',
 				labelInput: 'Texto de entrada',
@@ -1430,6 +1441,7 @@
 				themeLabel: 'Tema', themeAuto: 'Automático', themeLight: 'Claro', themeDark: 'Escuro'
 			},
 			ur: {
+				outputPlaceholder: 'آپ کا تیار کردہ جملہ یہاں ظاہر ہوگا۔',
 				title: 'خود حوالہ جملہ ساز',
 				subtitle: 'آپ کے متن کو ایسے جملے سے مکمل کرتا ہے جو اپنے حروف خود درست گنتا ہے۔',
 				labelInput: 'داخل کردہ متن',
@@ -1450,6 +1462,7 @@
 				themeLabel: 'تھیم', themeAuto: 'خودکار', themeLight: 'روشن', themeDark: 'تاریک'
 			},
 			ru: {
+				outputPlaceholder: 'Сгенерированное предложение появится здесь.',
 				title: 'Генератор самореферентных предложений',
 				subtitle: 'Дополняет ваш текст фразой, которая правильно считает собственные буквы.',
 				labelInput: 'Исходный текст',
@@ -1470,6 +1483,7 @@
 				themeLabel: 'Тема', themeAuto: 'Авто', themeLight: 'Светлая', themeDark: 'Тёмная'
 			},
 			de: {
+				outputPlaceholder: 'Ihr erzeugter Satz erscheint hier.',
 				title: 'Generator für selbstbezügliche Sätze',
 				subtitle: 'Ergänzt Ihren Text um eine Wendung, die ihre eigenen Buchstaben korrekt zählt.',
 				labelInput: 'Eingabetext',
@@ -1490,6 +1504,7 @@
 				themeLabel: 'Design', themeAuto: 'Automatisch', themeLight: 'Hell', themeDark: 'Dunkel'
 			},
 			vi: {
+				outputPlaceholder: 'Câu được tạo sẽ xuất hiện tại đây.',
 				title: 'Trình tạo câu tự quy chiếu',
 				subtitle: 'Hoàn thiện văn bản của bạn bằng một mệnh đề tự đếm đúng số chữ cái của chính nó.',
 				labelInput: 'Văn bản nhập',
@@ -1510,6 +1525,7 @@
 				themeLabel: 'Giao diện', themeAuto: 'Tự động', themeLight: 'Sáng', themeDark: 'Tối'
 			},
 			sw: {
+				outputPlaceholder: 'Sentensi iliyozalishwa itaonekana hapa.',
 				title: 'Jenereta ya Sentensi za Kujirejelea',
 				subtitle: 'Hukamilisha maandishi yako kwa kishazi kinachohesabu herufi zake chenyewe kwa usahihi.',
 				labelInput: 'Maandishi ya kuingiza',
@@ -1530,6 +1546,7 @@
 				themeLabel: 'Mandhari', themeAuto: 'Otomatiki', themeLight: 'Mwanga', themeDark: 'Giza'
 			},
 			tr: {
+				outputPlaceholder: 'Oluşturulan cümleniz burada görünecek.',
 				title: 'Özgönderimli Cümle Oluşturucu',
 				subtitle: 'Metninizi, kendi harflerini doğru şekilde sayan bir ifadeyle tamamlar.',
 				labelInput: 'Girdi metni',
@@ -1550,6 +1567,7 @@
 				themeLabel: 'Tema', themeAuto: 'Otomatik', themeLight: 'Açık', themeDark: 'Koyu'
 			},
 			tl: {
+				outputPlaceholder: 'Lalabas dito ang nabuong pangungusap.',
 				title: 'Tagabuo ng Pangungusap na May Sariling Bilang',
 				subtitle: 'Kinukumpleto ang iyong teksto ng pariralang wastong nagbibilang ng sarili nitong mga titik.',
 				labelInput: 'Tekstong ipapasok',
@@ -1570,6 +1588,7 @@
 				themeLabel: 'Tema', themeAuto: 'Awtomatiko', themeLight: 'Maliwanag', themeDark: 'Madilim'
 			},
 			fa: {
+				outputPlaceholder: 'جمله تولید شده در اینجا ظاهر می‌شود.',
 				title: 'مولد جمله خودارجاع',
 				subtitle: 'متن شما را با عبارتی تکمیل می‌کند که تعداد حروف خود را به درستی می‌شمارد.',
 				labelInput: 'متن ورودی',
@@ -1590,6 +1609,7 @@
 				themeLabel: 'طرح', themeAuto: 'خودکار', themeLight: 'روشن', themeDark: 'تاریک'
 			},
 			it: {
+				outputPlaceholder: 'La tua frase generata apparirà qui.',
 				title: 'Generatore di Frasi Autoreferenziali',
 				subtitle: 'Completa il tuo testo con una frase che conta correttamente le proprie lettere.',
 				labelInput: 'Testo di input',
@@ -2184,11 +2204,17 @@
 				this.language = AppSettings.detectLang(Object.keys(text));
 				this.setup();
 				this.lang(this.language);
+				this.showPlaceholder();
 			}
 
 			setup() {
 				elements.language.addEventListener('change', e => this.lang(e.target.value));
-				elements.input.addEventListener('input', () => this.updateLetterCount());
+				elements.input.addEventListener('input', () => {
+					this.updateLetterCount();
+					if (!elements.input.value.trim() && !elements.output.classList.contains('placeholder')) {
+						this.showPlaceholder();
+					}
+				});
 				elements.input.addEventListener('keydown', e => {
 					if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
 						e.preventDefault();
@@ -2207,6 +2233,14 @@
 			}
 
 			string(key) { return text[this.language]?.[key] ?? text.en[key] ?? key; }
+
+			showPlaceholder() {
+				elements.output.textContent = this.string('outputPlaceholder');
+				elements.output.classList.add('placeholder');
+				elements.output.classList.remove('error');
+				elements.outputInfo.textContent = '';
+				if (elements.copyBtn) elements.copyBtn.classList.add('hidden');
+			}
 
 			updateLetterCount() {
 				if (!elements.letterCount) return;
@@ -2238,7 +2272,11 @@
 					elements.input.value = this.string('placeholder');
 				}
 				this.updateLetterCount();
-				if (elements.output.textContent.trim()) this.generateSentence();
+				if (elements.output.classList.contains('placeholder') || !elements.output.textContent.trim()) {
+					this.showPlaceholder();
+				} else {
+					this.generateSentence();
+				}
 			}
 
 			generateSentence() {
@@ -2288,6 +2326,7 @@
 
 			showError(message) {
 				elements.output.textContent = message;
+				elements.output.classList.remove('placeholder');
 				elements.output.classList.add('error');
 				elements.outputInfo.textContent = '';
 				if (elements.copyBtn) elements.copyBtn.classList.add('hidden');
@@ -2295,6 +2334,7 @@
 
 			showResult(result) {
 				elements.output.textContent = result.sentence;
+				elements.output.classList.remove('placeholder');
 				elements.output.classList.toggle('error', !result.stable);
 				elements.outputInfo.textContent = result.stable
 					? this.string('stableInfo')(result.iterations)
