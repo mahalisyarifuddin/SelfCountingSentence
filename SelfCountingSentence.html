@@ -990,7 +990,7 @@
 			<div class="field">
 				<div class="row-flex" style="justify-content: space-between; align-items: center; margin-bottom: var(--sp-1);">
 					<label id="labelInput" for="input" style="margin-bottom: 0;">Input text</label>
-					<span id="letterCount" class="badge" aria-live="polite">0 letters</span>
+					<span id="letterCount" class="badge">0 letters</span>
 				</div>
 				<textarea id="input" rows="4" autocomplete="off" spellcheck="false" aria-describedby="inputHint"></textarea>
 				<p class="hint" id="inputHint">Write the opening clause; the count and the word for
@@ -1000,7 +1000,7 @@
 			<div class="row-flex" style="margin-top:var(--sp-4)">
 				<span class="grow"></span>
 				<button type="button" class="secondary" id="exampleBtn">Example</button>
-				<button type="button" id="generate">Generate sentence</button>
+				<button type="button" id="generate" aria-keyshortcuts="Control+Enter Meta+Enter">Generate sentence</button>
 			</div>
 		</section>
 
@@ -1011,7 +1011,7 @@
 			</div>
 			<div class="stack">
 				<div id="output" role="status"></div>
-				<p id="outputInfo" class="hint" role="status" aria-live="polite"></p>
+				<p id="outputInfo" class="hint" role="status"></p>
 			</div>
 		</section>
 	</main>
@@ -1328,8 +1328,10 @@
 				generate: 'Generate sentence',
 				generateHint: 'Generate sentence (Ctrl+Enter / ⌘↩)',
 				exampleBtn: 'Example',
+				exampleBtnHint: 'Insert example opening clause for selected language',
 				resultTitle: 'Result',
 				copyBtn: 'Copy',
+				copyBtnHint: 'Copy generated sentence to clipboard',
 				copied: 'Copied!',
 				errorEmpty: 'Please enter some text first.',
 				unableToGenerate: '[unable to generate stable sentence]',
@@ -1347,8 +1349,10 @@
 				generate: 'Buat kalimat',
 				generateHint: 'Buat kalimat (Ctrl+Enter / ⌘↩)',
 				exampleBtn: 'Contoh',
+				exampleBtnHint: 'Sisipkan contoh klausa pembuka untuk bahasa yang dipilih',
 				resultTitle: 'Hasil',
 				copyBtn: 'Salin',
+				copyBtnHint: 'Salin kalimat yang dihasilkan ke papan klip',
 				copied: 'Tersalin!',
 				errorEmpty: 'Mohon masukkan teks terlebih dahulu.',
 				unableToGenerate: '[tidak dapat menghasilkan kalimat stabil]',
@@ -2261,6 +2265,12 @@
 				elements.input.placeholder = this.string('placeholder');
 				if (elements.generate) {
 					elements.generate.title = this.string('generateHint');
+				}
+				if (elements.exampleBtn) {
+					elements.exampleBtn.title = this.string('exampleBtnHint');
+				}
+				if (elements.copyBtn) {
+					elements.copyBtn.title = this.string('copyBtnHint');
 				}
 
 				// Arabic and Urdu flip the whole shell, not just the result text.
